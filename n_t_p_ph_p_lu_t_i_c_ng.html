@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập Pháp luật Đại cương - Hệ thống Trắc nghiệm & Thi thử</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        .option-card {
+            transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-card:hover:not(.disabled-opt) {
+            transform: translateY(-1px);
+        }
+        @keyframes pulse-red {
+            0%, 100% { background-color: #fee2e2; color: #dc2626; }
+            50% { background-color: #ef4444; color: #ffffff; }
+        }
+        .timer-danger {
+            animation: pulse-red 1.2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- HEADER & MAIN NAVIGATION -->
+    <header class="bg-gradient-to-r from-slate-900 via-blue-950 to-slate-900 text-white shadow-lg sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between py-3.5 gap-3">
+                <!-- Brand -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="switchMainTab('study')">
+                        <div class="bg-amber-500/20 border border-amber-400/40 p-2 rounded-xl text-amber-400">
+                            <!-- Scale of Justice SVG -->
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h1 class="text-lg sm:text-xl font-extrabold tracking-tight text-white">Ôn tập Pháp luật Đại cương</h1>
+                            <p class="text-xs text-blue-200 font-medium">Ngân hàng 208 câu hỏi chuẩn • 4 Chương</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Tabs -->
+                <nav class="flex bg-slate-800/80 p-1 rounded-xl border border-slate-700/70 self-stretch md:self-auto">
+                    <button id="nav-study" onclick="switchMainTab('study')" class="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                        <span>Ôn tập (Theo chương)</span>
+                    </button>
+                    <button id="nav-exam" onclick="switchMainTab('exam')" class="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        <span>Thi thử (Tính giờ)</span>
+                    </button>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        <!-- ========================================================= -->
+        <!-- SECTION 1: MỤC ÔN TẬP THEO CHƯƠNG                         -->
+        <!-- ========================================================= -->
+        <section id="section-study" class="space-y-6">
+            <!-- Chapter Selector Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" id="study-chapter-cards">
+                <!-- Rendered via JS -->
+            </div>
+
+            <!-- Study Control Bar -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span id="study-current-badge" class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Chương 1</span>
+                            <h2 id="study-current-title" class="text-lg sm:text-xl font-bold text-slate-800">Những vấn đề cơ bản về Nhà nước</h2>
+                        </div>
+                        <p id="study-progress-text" class="text-sm text-slate-500 mt-1">Đã hoàn thành 0/33 câu (Đúng: 0 • Sai: 0)</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <!-- View Mode Toggle -->
+                        <div class="inline-flex rounded-xl bg-slate-100 p-1 border border-slate-200">
+                            <button id="btn-view-list" onclick="setStudyViewMode('list')" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition">
+                                Danh sách
+                            </button>
+                            <button id="btn-view-single" onclick="setStudyViewMode('single')" class="px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition">
+                                Từng câu
+                            </button>
+                        </div>
+
+                        <button onclick="confirmResetChapter()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 transition flex items-center gap-1.5">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Làm lại chương này
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Search & Filters -->
+                <div class="mt-4 flex flex-col md:flex-row gap-3 justify-between">
+                    <div class="relative flex-grow max-w-md">
+                        <input type="text" id="study-search-input" oninput="handleStudySearch(this.value)" placeholder="Tìm kiếm nội dung câu hỏi, từ khóa..." class="w-full pl-10 pr-4 py-2 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+
+                    <div class="flex flex-wrap gap-1.5" id="study-filter-buttons">
+                        <button onclick="setStudyFilter('all')" data-filter="all" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-white transition">Tất cả</button>
+                        <button onclick="setStudyFilter('unanswered')" data-filter="unanswered" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Chưa làm</button>
+                        <button onclick="setStudyFilter('correct')" data-filter="correct" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Làm đúng</button>
+                        <button onclick="setStudyFilter('wrong')" data-filter="wrong" class="filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition">Làm sai</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Study Questions Container -->
+            <div id="study-questions-area" class="space-y-4">
+                <!-- Rendered via JS -->
+            </div>
+        </section>
+
+        <!-- ========================================================= -->
+        <!-- SECTION 2: MỤC THI THỬ (KIỂM TRA TÍNH GIỜ)                -->
+        <!-- ========================================================= -->
+        <section id="section-exam" class="hidden">
+            
+            <!-- 2A. MÀN HÌNH CHỌN CHẾ ĐỘ THI -->
+            <div id="exam-setup-view" class="space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sm:p-8 text-center max-w-3xl mx-auto">
+                    <span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3">Phòng thi trực tuyến</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Chọn hình thức thi thử</h2>
+                    <p class="text-slate-500 mt-2 text-sm sm:text-base">Hệ thống tự động xáo trộn câu hỏi, tính giờ đếm ngược và chấm điểm chi tiết sau khi nộp bài.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                    <!-- Chế độ A: Thi từng chương -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:border-blue-400 transition">
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-blue-100 text-blue-600 flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900">Chế độ A: Thi từng chương</h3>
+                            <p class="text-sm text-slate-500 mt-1.5">Kiểm tra toàn bộ câu hỏi của một chương cụ thể. Các câu hỏi được xáo trộn ngẫu nhiên.</p>
+                            
+                            <div class="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <span class="flex items-center gap-1 text-blue-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Thời gian: 35 phút
+                                </span>
+                                <span>•</span>
+                                <span>Toàn bộ câu trong chương</span>
+                            </div>
+
+                            <div class="mt-5">
+                                <label class="block text-xs font-bold uppercase text-slate-500 mb-2">Chọn chương muốn thi:</label>
+                                <select id="exam-chapter-select" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="1">Chương 1: Những vấn đề cơ bản về Nhà nước (33 câu)</option>
+                                    <option value="2">Chương 2: Những vấn đề cơ bản về Pháp luật (30 câu)</option>
+                                    <option value="3">Chương 3: Pháp luật Dân sự (60 câu)</option>
+                                    <option value="4">Chương 4: Pháp luật Lao động (85 câu)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onclick="startChapterExam()" class="mt-6 w-full py-3.5 px-5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                            <span>Bắt đầu thi theo chương</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- Chế độ B: Thi ngẫu nhiên tổng hợp -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 flex flex-col justify-between hover:border-indigo-400 transition relative overflow-hidden">
+                        <div class="absolute top-0 right-0 bg-indigo-600 text-white text-[10px] font-bold px-3 py-1 rounded-bl-xl uppercase tracking-wider">Đề chuẩn tổng hợp</div>
+                        <div>
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-4">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-slate-900">Chế độ B: Thi ngẫu nhiên tổng hợp</h3>
+                            <p class="text-sm text-slate-500 mt-1.5">Tạo đề thi ngẫu nhiên phân bổ đều từ cả 4 chương. Thuật toán chống trùng lặp đề thi liền kề trước đó.</p>
+                            
+                            <div class="mt-4 flex items-center gap-4 text-xs font-semibold text-slate-600 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <span class="flex items-center gap-1 text-indigo-700">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    Thời gian: 30 phút
+                                </span>
+                                <span>•</span>
+                                <span>30 câu hỏi tổng hợp</span>
+                            </div>
+
+                            <div class="mt-5 bg-indigo-50/70 border border-indigo-100 rounded-xl p-3.5 text-xs text-slate-600 space-y-1">
+                                <p class="font-bold text-indigo-900">Cấu trúc ma trận đề thi:</p>
+                                <p>• Chương 1 (Nhà nước): 7 câu • Chương 2 (Pháp luật): 7 câu</p>
+                                <p>• Chương 3 (Dân sự): 8 câu • Chương 4 (Lao động): 8 câu</p>
+                            </div>
+                        </div>
+
+                        <button onclick="startRandomExam()" class="mt-6 w-full py-3.5 px-5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center gap-2">
+                            <span>Tạo đề & Bắt đầu thi ngay</span>
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2B. PHÒNG THI ĐANG DIỄN RA -->
+            <div id="exam-active-view" class="hidden">
+                <!-- Sticky Top Exam Bar -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 p-3.5 sm:p-4 mb-6 sticky top-[72px] z-30 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                        <span id="exam-mode-badge" class="text-[11px] font-bold uppercase px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-800">Thi tổng hợp</span>
+                        <h3 id="exam-active-title" class="text-sm sm:text-base font-bold text-slate-800 mt-0.5">Đề thi ngẫu nhiên 30 câu</h3>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <div class="text-right hidden sm:block">
+                            <div class="text-[11px] text-slate-400 font-semibold uppercase">Đã làm</div>
+                            <div id="exam-answered-counter" class="text-sm font-extrabold text-slate-800">0 / 30</div>
+                        </div>
+
+                        <!-- Countdown Timer -->
+                        <div id="exam-timer-box" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 font-mono font-extrabold text-lg sm:text-xl">
+                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                            <span id="exam-timer-display">30:00</span>
+                        </div>
+
+                        <button onclick="openSubmitConfirmModal()" class="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm rounded-xl shadow transition">
+                            Nộp bài
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Exam Layout: Questions Left, Palette Right -->
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                    <!-- Questions List -->
+                    <div id="exam-questions-list" class="lg:col-span-8 space-y-5">
+                        <!-- Rendered via JS -->
+                    </div>
+
+                    <!-- Question Navigation Palette -->
+                    <div class="lg:col-span-4 bg-white rounded-2xl shadow-sm border border-slate-200 p-4 sm:p-5 lg:sticky lg:top-[156px]">
+                        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                            <h4 class="font-bold text-slate-800 text-sm">Danh sách câu hỏi</h4>
+                            <span id="palette-progress-text" class="text-xs font-bold text-blue-600">0/30 câu</span>
+                        </div>
+                        
+                        <div class="flex items-center gap-4 text-xs text-slate-500 my-3">
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-600 inline-block"></span> Đã chọn</span>
+                            <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-100 border border-slate-300 inline-block"></span> Chưa làm</span>
+                        </div>
+
+                        <div id="exam-palette-grid" class="grid grid-cols-6 sm:grid-cols-8 lg:grid-cols-5 gap-2 max-h-[340px] overflow-y-auto pr-1">
+                            <!-- Rendered via JS -->
+                        </div>
+
+                        <div class="mt-5 pt-4 border-t border-slate-100 flex gap-2">
+                            <button onclick="quitExamConfirm()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                                Thoát phòng thi
+                            </button>
+                            <button onclick="openSubmitConfirmModal()" class="flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 shadow-sm transition">
+                                Nộp bài thi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2C. MÀN HÌNH KẾT QUẢ & XEM LẠI BÀI THI -->
+            <div id="exam-result-view" class="hidden space-y-6">
+                <!-- Score Summary Card -->
+                <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+                    <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-6 sm:p-8 text-white text-center">
+                        <span class="inline-block px-3 py-1 rounded-full bg-white/15 text-xs font-bold uppercase tracking-wider mb-2">Kết quả bài thi</span>
+                        <h2 id="res-exam-title" class="text-xl sm:text-2xl font-bold">Đề thi ngẫu nhiên 30 câu</h2>
+                        
+                        <div class="mt-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-12">
+                            <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-8 py-4">
+                                <div class="text-xs uppercase tracking-wider text-blue-200 font-semibold">Điểm số (Hệ 10)</div>
+                                <div id="res-score-10" class="text-4xl sm:text-5xl font-black text-amber-300 mt-1">8.5</div>
+                            </div>
+                            <div class="grid grid-cols-3 gap-4 text-center">
+                                <div class="bg-white/10 rounded-xl p-3 min-w-[85px]">
+                                    <div class="text-xs text-blue-200">Số câu đúng</div>
+                                    <div id="res-correct-count" class="text-xl font-extrabold text-emerald-300 mt-0.5">25/30</div>
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-3 min-w-[85px]">
+                                    <div class="text-xs text-blue-200">Câu sai/trống</div>
+                                    <div id="res-wrong-count" class="text-xl font-extrabold text-rose-300 mt-0.5">5</div>
+                                </div>
+                                <div class="bg-white/10 rounded-xl p-3 min-w-[85px]">
+                                    <div class="text-xs text-blue-200">Thời gian làm</div>
+                                    <div id="res-time-taken" class="text-xl font-extrabold text-white mt-0.5">12:45</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <p id="res-grade-text" class="mt-5 text-sm sm:text-base font-semibold text-blue-100">Xếp loại: Giỏi — Nắm vững kiến thức pháp luật!</p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="p-4 sm:p-5 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-center gap-3">
+                        <button onclick="retakeSameExam()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                            Làm lại đề này
+                        </button>
+                        <button onclick="generateNewExamSameMode()" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                            Tạo đề mới (Xáo trộn)
+                        </button>
+                        <button onclick="backToExamSetup()" class="px-5 py-2.5 rounded-xl text-sm font-semibold bg-slate-200 text-slate-700 hover:bg-slate-300 transition">
+                            Chọn chế độ thi khác
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Review Filter Bar -->
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h3 class="font-bold text-slate-800 text-base">Chi tiết bài làm & Đáp án</h3>
+                    <div class="flex flex-wrap gap-2" id="review-filter-group">
+                        <button onclick="filterExamReview('all')" data-rfilter="all" class="rfilter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-800 text-white">Tất cả câu</button>
+                        <button onclick="filterExamReview('wrong')" data-rfilter="wrong" class="rfilter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-rose-50 text-rose-700 hover:bg-rose-100">Câu làm sai</button>
+                        <button onclick="filterExamReview('unanswered')" data-rfilter="unanswered" class="rfilter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-amber-50 text-amber-700 hover:bg-amber-100">Câu chưa làm</button>
+                        <button onclick="filterExamReview('correct')" data-rfilter="correct" class="rfilter-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-emerald-50 text-emerald-700 hover:bg-emerald-100">Câu làm đúng</button>
+                    </div>
+                </div>
+
+                <!-- Review Questions List -->
+                <div id="exam-review-list" class="space-y-4">
+                    <!-- Rendered via JS -->
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- CUSTOM CONFIRMATION MODAL (Thay thế hoàn toàn alert/confirm) -->
+    <div id="custom-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 transform transition-all">
+            <div class="flex items-center gap-3 mb-3">
+                <div id="modal-icon-box" class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                </div>
+                <h3 id="modal-title" class="text-lg font-bold text-slate-900">Xác nhận</h3>
+            </div>
+            <p id="modal-body" class="text-sm text-slate-600 leading-relaxed mb-6">Bạn có chắc chắn muốn thực hiện thao tác này?</p>
+            <div class="flex justify-end gap-2.5">
+                <button id="modal-cancel-btn" onclick="closeCustomModal()" class="px-4 py-2 rounded-xl text-sm font-semibold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">Hủy bỏ</button>
+                <button id="modal-confirm-btn" class="px-5 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-700 shadow-sm transition">Đồng ý</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-slate-200 py-5 mt-12">
+        <div class="max-w-7xl mx-auto px-4 text-center text-xs text-slate-500">
+            <p class="font-semibold text-slate-700">Hệ thống Ôn tập & Thi thử Pháp luật Đại cương (208 Câu hỏi)</p>
+            <p class="mt-1">Cập nhật theo Hiến pháp, Bộ luật Dân sự 2015, Bộ luật Lao động 2019 và các quy định pháp luật hiện hành.</p>
+        </div>
+    </footer>
+
+    <script>
+    // =========================================================================
+    // 1. NGÂN HÀNG DỮ LIỆU ĐẦY ĐỦ 208 CÂU HỎI (4 CHƯƠNG)
+    // =========================================================================
+    const CHAPTER_META = {
+        1: { title: "Chương 1: Những vấn đề cơ bản về Nhà nước", short: "Chương 1", desc: "Nguồn gốc, bản chất, hình thức và bộ máy Nhà nước CHXHCN Việt Nam", count: 33 },
+        2: { title: "Chương 2: Những vấn đề cơ bản về Pháp luật", short: "Chương 2", desc: "Thuộc tính, quy phạm, văn bản QPPL, quan hệ pháp luật và vi phạm pháp luật", count: 30 },
+        3: { title: "Chương 3: Pháp luật Dân sự", short: "Chương 3", desc: "Chủ thể, tài sản, giao dịch, đại diện, quyền sở hữu, hợp đồng, BTTH và thừa kế", count: 60 },
+        4: { title: "Chương 4: Pháp luật Lao động", short: "Chương 4", desc: "Quan hệ lao động, hợp đồng, thử việc, tiền lương, thời giờ, kỷ luật và tranh chấp", count: 85 }
+    };
+
+    const QUESTION_BANK = [
+        // ==================== CHƯƠNG 1 (33 CÂU) ====================
+        { id: "c1_1", chapter: 1, num: 1, q: "Theo quan điểm của thuyết khế ước xã hội, nguyên nhân nào dẫn đến sự ra đời của Nhà nước?", opts: { A: "Do thượng đế sáng tạo ra", B: "Do sự thỏa thuận của những người dân sống trong trạng thái tự nhiên không có Nhà nước.", C: "Do mâu thuẫn giai cấp không thể điều hòa.", D: "Do sự phát triển của gia đình" }, ans: "B", exp: "Thuyết khế ước xã hội cho rằng Nhà nước là sản phẩm của một hợp đồng (khế ước) được ký kết giữa những con người sống trong trạng thái tự nhiên." },
+        { id: "c1_2", chapter: 1, num: 2, q: "Theo quan điểm của thuyết thần quyền, nguyên nhân nào dẫn đến sự ra đời của Nhà nước?", opts: { A: "Do thượng đế/lực lượng siêu nhiên sáng tạo ra", B: "Do sự thỏa thuận của những công dân", C: "Do xã hội xuất hiện chế độ tư hữu và mâu thuẫn giai cấp không thể điều hòa.", D: "Do sự phát triển của gia đình" }, ans: "A", exp: "Thuyết thần quyền (thần học) khẳng định Thượng đế là người sắp đặt trật tự xã hội và sáng tạo ra Nhà nước để bảo vệ trật tự chung." },
+        { id: "c1_3", chapter: 1, num: 3, q: "Trong các quan điểm dưới đây, quan điểm nào cho rằng Nhà nước ra đời là do mâu thuẫn giai cấp không thể điều hòa được?", opts: { A: "Thuyết thần học", B: "Thuyết gia trưởng", C: "Thuyết khế ước xã hội", D: "Học thuyết Mác – Lênin" }, ans: "D", exp: "Theo học thuyết Mác – Lênin, Nhà nước chỉ xuất hiện khi xã hội phân hóa thành các giai cấp đối kháng và mâu thuẫn giai cấp phát triển đến mức không thể điều hòa được." },
+        { id: "c1_4", chapter: 1, num: 4, q: "Dấu hiệu nào sau đây không phải là dấu hiệu đặc trưng của Nhà nước?", opts: { A: "Nhà nước có chủ quyền quốc gia", B: "Sự tồn tại của Nhà nước về mặt không gian được xác định bởi yếu tố lãnh thổ", C: "Nhà nước chỉ xuất hiện khi xã hội có giai cấp và đấu tranh giai cấp", D: "Nhà nước có quyền lực chính trị đặc biệt" }, ans: "C", exp: "'Nhà nước chỉ xuất hiện khi xã hội có giai cấp và đấu tranh giai cấp' thuộc về nguồn gốc/bản chất của Nhà nước, không phải là 1 trong 5 dấu hiệu đặc trưng phân biệt Nhà nước với các tổ chức xã hội khác." },
+        { id: "c1_5", chapter: 1, num: 5, q: "Căn cứ vào lĩnh vực hoạt động thực tế của Nhà nước, chức năng Nhà nước được chia thành:", opts: { A: "Chức năng lập pháp, chức năng hành pháp, chức năng tư pháp", B: "Chức năng của toàn thể bộ máy NN, chức năng của cơ quan NN", C: "Chức năng kinh tế, chức năng xã hội", D: "Chức năng đối nội, chức năng đối ngoại" }, ans: "C", exp: "Căn cứ vào lĩnh vực hoạt động thực tế, chức năng Nhà nước gồm: chức năng kinh tế, chức năng xã hội, chức năng trấn áp..." },
+        { id: "c1_6", chapter: 1, num: 6, q: "Hình thức Nhà nước bao gồm:", opts: { A: "Hình thức chính thể quân chủ, hình thức cấu trúc nhà nước, chế độ chính trị", B: "Hình thức chính thể, hình thức cấu trúc Nhà nước", C: "Hình thức cấu trúc Nhà nước, chế độ chính trị", D: "Tất cả đều sai" }, ans: "D", exp: "Hình thức Nhà nước được hợp thành từ 3 yếu tố: Hình thức chính thể, Hình thức cấu trúc Nhà nước và Chế độ chính trị (câu A thu hẹp thành chính thể quân chủ nên sai)." },
+        { id: "c1_7", chapter: 1, num: 7, q: "Hình thức cấu trúc Nhà nước bao gồm:", opts: { A: "Chính thể quân chủ, chính thể cộng hòa", B: "Nhà nước đơn nhất, Nhà nước liên bang", C: "Chế độ dân chủ, chế độ phi dân chủ", D: "Tất cả đều đúng" }, ans: "B", exp: "Hình thức cấu trúc Nhà nước là sự tổ chức Nhà nước thành các đơn vị hành chính lãnh thổ, gồm 2 loại cơ bản: Nhà nước đơn nhất và Nhà nước liên bang." },
+        { id: "c1_8", chapter: 1, num: 8, q: "Trong hình thức chính thể nào, quyền lực được hình thành bằng con đường thừa kế?", opts: { A: "Quân chủ", B: "Cộng hòa", C: "Tất cả đều đúng", D: "Tất cả đều sai" }, ans: "A", exp: "Chính thể quân chủ là hình thức trong đó quyền lực tối cao tập trung toàn bộ hoặc một phần trong tay người đứng đầu Nhà nước (Vua, Quốc vương) theo nguyên tắc thừa kế." },
+        { id: "c1_9", chapter: 1, num: 9, q: "Nguyên thủ quốc gia của nước CHXHCN Việt Nam là:", opts: { A: "Chủ tịch nước", B: "Chủ tịch quốc hội", C: "Thủ tướng Chính phủ", D: "Tổng bí thư Đảng cộng sản Việt Nam" }, ans: "A", exp: "Theo Điều 86 Hiến pháp 2013: Chủ tịch nước là người đứng đầu Nhà nước, thay mặt nước Cộng hòa xã hội chủ nghĩa Việt Nam về đối nội và đối ngoại." },
+        { id: "c1_10", chapter: 1, num: 10, q: "Trong các cơ quan sau, cơ quan nào không phải cơ quan ngang bộ?", opts: { A: "Ủy ban dân tộc", B: "Văn phòng Chính phủ", C: "Ngân hàng Nhà nước Việt Nam", D: "Thanh tra Chính phủ" }, ans: "A", exp: "Theo cơ cấu tổ chức Chính phủ tinh gọn năm 2025, Ủy ban Dân tộc đã hợp nhất thành Bộ Dân tộc và Tôn giáo (là Bộ), chỉ còn 3 cơ quan ngang bộ là Văn phòng Chính phủ, Ngân hàng Nhà nước VN và Thanh tra Chính phủ." },
+        { id: "c1_11", chapter: 1, num: 11, q: "Viện kiểm sát nhân dân không có chức năng nào sau đây?", opts: { A: "Giám sát tối cao", B: "Kiểm sát các hoạt động tư pháp", C: "Thực hành quyền công tố", D: "Kiểm sát các hoạt động tư pháp; Thực hành quyền công tố" }, ans: "A", exp: "Theo Điều 107 Hiến pháp 2013, VKSND thực hành quyền công tố và kiểm sát hoạt động tư pháp. Quyền giám sát tối cao thuộc về Quốc hội." },
+        { id: "c1_12", chapter: 1, num: 12, q: "Trong các cơ quan sau, cơ quan nào là cơ quan hành chính nhà nước cao nhất của nước CHXHCN Việt Nam?", opts: { A: "Quốc hội", B: "Chính Phủ", C: "Tòa án nhân dân tối cao", D: "Viện kiểm sát nhân dân tối cao" }, ans: "B", exp: "Theo Điều 94 Hiến pháp 2013: Chính phủ là cơ quan hành chính nhà nước cao nhất của nước CHXHCN Việt Nam, thực hiện quyền hành pháp." },
+        { id: "c1_13", chapter: 1, num: 13, q: "Quốc gia nào sau đây theo hình thức chính thể quân chủ?", opts: { A: "Lào", B: "Nga", C: "Thái Lan", D: "Đức" }, ans: "C", exp: "Thái Lan theo hình thức chính thể quân chủ lập hiến (có Nhà vua là nguyên thủ quốc gia)." },
+        { id: "c1_14", chapter: 1, num: 14, q: "Cơ quan nào sau đây không phải cơ quan hành chính Nhà nước?", opts: { A: "Ủy ban nhân dân cấp tỉnh", B: "Hội đồng nhân dân cấp tỉnh", C: "Chính Phủ", D: "Ủy ban nhân dân cấp xã" }, ans: "B", exp: "Hội đồng nhân dân là cơ quan quyền lực nhà nước ở địa phương, đại diện cho ý chí, nguyện vọng của Nhân dân địa phương (không phải cơ quan hành chính)." },
+        { id: "c1_15", chapter: 1, num: 15, q: "Bộ máy Nhà nước là:", opts: { A: "Hệ thống các cơ quan hành chính nhà nước từ Trung ương đến địa phương", B: "Hệ thống các cơ quan nhà nước từ cấp tỉnh đến cấp xã", C: "Hệ thống các cơ quan nhà nước từ Trung ương đến địa phương", D: "Hệ thống các cơ quan nhà nước và các tổ chức chính trị xã hội." }, ans: "C", exp: "Bộ máy Nhà nước là hệ thống các cơ quan nhà nước từ Trung ương đến địa phương được tổ chức và hoạt động theo những nguyên tắc chung thống nhất." },
+        { id: "c1_16", chapter: 1, num: 16, q: "Cơ cấu tổ chức của bộ máy hành chính nhà nước theo đơn vị hành chính - lãnh thổ ở Việt Nam hiện nay?", opts: { A: "Bộ máy hành chính trung ương và Bộ máy hành chính địa phương", B: "Bộ máy hành chính cấp tỉnh và Bộ máy hành chính xã", C: "Bộ máy hành chính cấp tỉnh, Bộ máy hành chính cấp huyện và Bộ máy hành chính cấp xã", D: "Tất cả đều sai" }, ans: "B", exp: "Theo mô hình tổ chức chính quyền địa phương 2 cấp hiện hành (bỏ cấp huyện), bộ máy hành chính theo đơn vị hành chính - lãnh thổ ở địa phương gồm cấp tỉnh và cấp xã." },
+        { id: "c1_17", chapter: 1, num: 17, q: "Trong các cơ quan sau, cơ quan nào có chức năng xét xử?", opts: { A: "Hội đồng nhân dân", B: "Ủy ban nhân dân", C: "Tòa án nhân dân", D: "Viện kiểm sát nhân dân" }, ans: "C", exp: "Theo Điều 102 Hiến pháp 2013: Tòa án nhân dân là cơ quan xét xử của nước CHXHCN Việt Nam, thực hiện quyền tư pháp." },
+        { id: "c1_18", chapter: 1, num: 18, q: "Kỳ họp thường lệ của Quốc hội nước CHXHCN Việt Nam được tổ chức?", opts: { A: "Mỗi năm một lần", B: "Mỗi năm hai lần", C: "Hai năm một lần", D: "Năm năm một lần" }, ans: "B", exp: "Theo Điều 83 Hiến pháp 2013: Quốc hội họp công khai mỗi năm hai kỳ thường lệ (ngoài ra có thể họp bất thường)." },
+        { id: "c1_19", chapter: 1, num: 19, q: "Nhà nước mang bản chất:", opts: { A: "Dân chủ", B: "Bóc lột", C: "Giai cấp và xã hội", D: "Bình đẳng" }, ans: "C", exp: "Bản chất của Nhà nước bao gồm hai thuộc tính thống nhất biện chứng với nhau là tính giai cấp và tính xã hội." },
+        { id: "c1_20", chapter: 1, num: 20, q: "Trong các cơ quan sau, cơ quan nào có quyền lập hiến, lập pháp?", opts: { A: "Quốc hội", B: "Chủ tịch nước", C: "Chính phủ", D: "Ủy ban nhân dân cấp tỉnh" }, ans: "A", exp: "Theo Điều 69 Hiến pháp 2013: Quốc hội thực hiện quyền lập hiến, quyền lập pháp, quyết định các vấn đề quan trọng của đất nước." },
+        { id: "c1_21", chapter: 1, num: 21, q: "Trong các cơ quan sau, cơ quan nào có quyền hành pháp?", opts: { A: "Viện kiểm sát nhân dân tối cao", B: "Hội đồng nhân dân cấp tỉnh", C: "Chính phủ", D: "Tòa án nhân dân tối cao" }, ans: "C", exp: "Theo Điều 94 Hiến pháp 2013: Chính phủ thực hiện quyền hành pháp, là cơ quan chấp hành của Quốc hội." },
+        { id: "c1_22", chapter: 1, num: 22, q: "Trong các cơ quan sau, cơ quan nào nắm quyền tư pháp?", opts: { A: "Ủy ban nhân dân", B: "Hội đồng nhân dân", C: "Quốc hội", D: "Tòa án nhân dân" }, ans: "D", exp: "Theo Điều 102 Hiến pháp 2013: Tòa án nhân dân thực hiện quyền tư pháp." },
+        { id: "c1_23", chapter: 1, num: 23, q: "Cơ cấu tổ chức của Chính phủ nước CHXHCN Việt Nam hiện nay bao gồm?", opts: { A: "18 Bộ, 4 cơ quan ngang Bộ", B: "18 Bộ, 5 cơ quan ngang Bộ", C: "14 Bộ, 3 cơ quan ngang Bộ", D: "14 Bộ, 4 cơ quan ngang Bộ" }, ans: "C", exp: "Theo Nghị quyết của Quốc hội khóa XV (năm 2025) về cơ cấu tổ chức của Chính phủ sau sắp xếp tinh gọn: Chính phủ gồm 14 Bộ và 3 cơ quan ngang Bộ (tổng 17 cơ quan)." },
+        { id: "c1_24", chapter: 1, num: 24, q: "Đơn vị hành chính cấp xã bao gồm:", opts: { A: "Xã, phường", B: "Xã, phường, thị trấn", C: "Xã, phường, thị trấn, đặc khu", D: "Xã, phường, đặc khu" }, ans: "D", exp: "Theo quy định về đơn vị hành chính 2 cấp hiện hành: Cấp tỉnh gồm tỉnh, thành phố trực thuộc trung ương; cấp xã gồm xã, phường, đặc khu." },
+        { id: "c1_25", chapter: 1, num: 25, q: "Hiện tại Việt Nam có bao nhiêu đặc khu?", opts: { A: "10", B: "11", C: "12", D: "13" }, ans: "C", exp: "Việt Nam hiện có 12 đặc khu hành chính: Cô Tô, Vân Đồn, Bạch Long Vĩ, Cát Hải, Hoàng Sa, Trường Sa, Côn Đảo, Phú Quý, Lý Sơn, Kiên Hải, Phú Quốc, Thổ Châu." },
+        { id: "c1_26", chapter: 1, num: 26, q: "Đơn vị hành chính cấp xã ở địa phương nào sau đây không phải là đặc khu?", opts: { A: "Phú Quốc (tỉnh An Giang)", B: "Côn Đảo (TP. Hồ Chí Minh)", C: "Cô Tô (tỉnh Quảng Ninh)", D: "Phú Lợi (TP. Hồ Chí Minh)" }, ans: "D", exp: "Phú Quốc, Côn Đảo và Cô Tô đều là các đặc khu; Phú Lợi là phường thuộc TP. Hồ Chí Minh." },
+        { id: "c1_27", chapter: 1, num: 27, q: "Quốc gia nào sau đây có hình thức cấu trúc đơn nhất?", opts: { A: "Trung Quốc", B: "Nga", C: "Mỹ", D: "Đức" }, ans: "A", exp: "Trung Quốc là nhà nước đơn nhất; Nga, Mỹ và Đức là các nhà nước liên bang." },
+        { id: "c1_28", chapter: 1, num: 28, q: "Cơ quan nào sau đây là cơ quan quyền lực nhà nước?", opts: { A: "Viện kiểm sát nhân dân TP. Hồ Chí Minh", B: "Ủy ban nhân dân TP. Hồ Chí Minh", C: "Hội đồng nhân dân TP. Hồ Chí Minh", D: "Tòa án nhân dân TP. Hồ Chí Minh" }, ans: "C", exp: "Hội đồng nhân dân các cấp (cùng với Quốc hội ở trung ương) là hệ thống cơ quan quyền lực nhà nước do nhân dân bầu ra." },
+        { id: "c1_29", chapter: 1, num: 29, q: "Cơ quan nào sau đây là cơ quan quyền lực nhà nước?", opts: { A: "Quốc hội", B: "Hội đồng nhân dân TP. Hồ Chí Minh", C: "Hội đồng nhân dân phường Thủ Dầu Một", D: "Tất cả đều đúng" }, ans: "D", exp: "Quốc hội là cơ quan quyền lực nhà nước cao nhất; HĐND cấp tỉnh và HĐND cấp xã đều là cơ quan quyền lực nhà nước ở địa phương." },
+        { id: "c1_30", chapter: 1, num: 30, q: "Cơ quan nào sau đây là cơ quan hành chính nhà nước?", opts: { A: "Tòa án nhân dân Khu vực 2 - TP. Hồ Chí Minh", B: "Ủy ban nhân dân phường Hiệp Bình (TP. Hồ Chí Minh)", C: "Hội đồng nhân dân phường Hiệp Bình (TP. Hồ Chí Minh)", D: "Tất cả đều sai" }, ans: "B", exp: "Ủy ban nhân dân các cấp là cơ quan hành chính nhà nước ở địa phương, chịu trách nhiệm chấp hành Hiến pháp, luật và nghị quyết của HĐND." },
+        { id: "c1_31", chapter: 1, num: 31, q: "Quốc gia nào sau đây theo hình thức chính thể cộng hòa?", opts: { A: "Pháp", B: "Campuchia", C: "Thái Lan", D: "Nhật Bản" }, ans: "A", exp: "Pháp là nước theo chính thể cộng hòa (Cộng hòa lưỡng tính); Campuchia, Thái Lan và Nhật Bản đều theo chính thể quân chủ lập hiến." },
+        { id: "c1_32", chapter: 1, num: 32, q: "Người đứng đầu Ủy ban thường vụ Quốc hội của Việt Nam gọi là:", opts: { A: "Chủ tịch nước", B: "Chủ tịch Quốc hội", C: "Thủ tướng", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Điều 73 Hiến pháp 2013: Ủy ban thường vụ Quốc hội gồm Chủ tịch Quốc hội, các Phó Chủ tịch Quốc hội và các Ủy viên; Chủ tịch Quốc hội là người đứng đầu." },
+        { id: "c1_33", chapter: 1, num: 33, q: "Trong hệ thống VKS, không có cơ quan nào sau đây?", opts: { A: "VKS quân sự các cấp", B: "VKSND khu vực", C: "VKSND chuyên biệt", D: "VKSND cấp tỉnh" }, ans: "C", exp: "Hệ thống VKSND theo quy định mới gồm: VKSND tối cao, VKSND cấp tỉnh, VKSND khu vực và Viện kiểm sát quân sự các cấp (không có VKSND chuyên biệt)." },
+
+        // ==================== CHƯƠNG 2 (30 CÂU) ====================
+        { id: "c2_1", chapter: 2, num: 1, q: "Thuộc tính nào sau đây là thuộc tính cơ bản của pháp luật?", opts: { A: "Tính bắt buộc", B: "Tính quy phạm phổ biến", C: "Tính giai cấp", D: "Tính xã hội" }, ans: "B", exp: "Pháp luật có 3 thuộc tính cơ bản: Tính quy phạm phổ biến, tính xác định chặt chẽ về mặt hình thức và tính được bảo đảm thực hiện bằng Nhà nước." },
+        { id: "c2_2", chapter: 2, num: 2, q: "Thuộc tính nào sau đây KHÔNG PHẢI là thuộc tính cơ bản của pháp luật?", opts: { A: "Tính xác định chặt chẽ về mặt hình thức", B: "Tính quy phạm phổ biến", C: "Tính bắt buộc", D: "Tính được bảo đảm bằng Nhà nước" }, ans: "C", exp: "3 thuộc tính cơ bản của pháp luật là: Tính quy phạm phổ biến, tính xác định chặt chẽ về mặt hình thức và tính được bảo đảm bằng Nhà nước (không dùng thuật ngữ 'Tính bắt buộc' chung chung như đạo đức/tôn giáo)." },
+        { id: "c2_3", chapter: 2, num: 3, q: "Pháp luật có mấy thuộc tính cơ bản?", opts: { A: "2", B: "3", C: "4", D: "5" }, ans: "B", exp: "Pháp luật có 3 thuộc tính cơ bản: (1) Tính quy phạm phổ biến; (2) Tính xác định chặt chẽ về mặt hình thức; (3) Tính được bảo đảm bằng Nhà nước." },
+        { id: "c2_4", chapter: 2, num: 4, q: "Pháp luật là:", opts: { A: "Hệ thống các tập quán do nhà nước thừa nhận để điều chỉnh các quan hệ xã hội", B: "Hệ thống các quy phạm đạo đức do nhà nước thừa nhận để điều chỉnh các quan hệ xã hội", C: "Hệ thống các quy tắc xử sự mang tính bắt buộc chung do nhà nước ban hành (hoặc thừa nhận) để điều chỉnh các quan hệ xã hội phù hợp với ý chí của giai cấp thống trị và được nhà nước bảo đảm thực hiện", D: "Tất cả đều sai" }, ans: "C", exp: "Đây là định nghĩa đầy đủ và chuẩn xác nhất về pháp luật theo khoa học pháp lý." },
+        { id: "c2_5", chapter: 2, num: 5, q: "Hình thức nhà nước thừa nhận các quyết định của cơ quan xét xử đã có hiệu lực pháp luật khi giải quyết các vụ việc cụ thể và lấy đó làm căn cứ pháp lí để áp dụng các vụ việc xảy ra tương tự sau này là hình thức pháp luật nào sau đây?", opts: { A: "Tập quán pháp", B: "Tiền lệ pháp", C: "Văn bản quy phạm pháp luật", D: "Tất cả đều sai" }, ans: "B", exp: "Tiền lệ pháp (hay án lệ) là hình thức Nhà nước thừa nhận các bản án, quyết định giải quyết vụ việc của Tòa án/cơ quan hành chính làm khuôn mẫu giải quyết các vụ việc tương tự về sau." },
+        { id: "c2_6", chapter: 2, num: 6, q: "Về nguyên tắc, cơ cấu của quy phạm pháp luật bao gồm:", opts: { A: "Giả định, quy định, chế tài", B: "Quy định, chế tài", C: "Giả định, chế tài", D: "Chủ thể, khách thể, nội dung" }, ans: "A", exp: "Cơ cấu logic đầy đủ của một quy phạm pháp luật gồm 3 bộ phận: Giả định, Quy định và Chế tài." },
+        { id: "c2_7", chapter: 2, num: 7, q: "Đặc điểm nào sau đây là đặc điểm của quy phạm pháp luật?", opts: { A: "Có tính ý chí", B: "Có cơ cấu chủ thể nhất định", C: "Mang tính bắt buộc chung và được áp dụng nhiều lần trong đời sống", D: "Có nội dung là quyền và nghĩa vụ của các chủ thể" }, ans: "C", exp: "Quy phạm pháp luật là quy tắc xử sự mang tính bắt buộc chung, do Nhà nước ban hành và được áp dụng nhiều lần trong đời sống cho đến khi bị sửa đổi, hủy bỏ." },
+        { id: "c2_8", chapter: 2, num: 8, q: "Bộ phận của quy phạm pháp luật nêu lên biện pháp tác động mà nhà nước dự kiến áp dụng đối với cá nhân hay tổ chức nào không thực hiện đúng mệnh lệnh của nhà nước là:", opts: { A: "Giả định", B: "Quy định", C: "Chế tài", D: "Tất cả đều sai" }, ans: "C", exp: "Chế tài là bộ phận của quy phạm pháp luật nêu lên các biện pháp cưỡng chế/tác động bất lợi của Nhà nước đối với chủ thể vi phạm phần quy định." },
+        { id: "c2_9", chapter: 2, num: 9, q: "Văn bản quy phạm pháp luật bao gồm:", opts: { A: "Văn bản luật, văn bản dưới luật", B: "Hiến pháp, Luật, Bộ luật", C: "Hiến pháp, văn bản dưới luật", D: "Tất cả đều sai" }, ans: "A", exp: "Hệ thống văn bản quy phạm pháp luật Việt Nam được chia làm 2 nhóm lớn: Văn bản luật (Hiến pháp, Bộ luật, Luật, Nghị quyết của Quốc hội) và Văn bản dưới luật." },
+        { id: "c2_10", chapter: 2, num: 10, q: "Văn bản luật là văn bản do cơ quan nào sau đây ban hành?", opts: { A: "Quốc hội", B: "Hội đồng Thẩm phán Tòa án nhân dân tối cao", C: "Chủ tịch nước", D: "Thủ tướng Chính phủ" }, ans: "A", exp: "Quốc hội là cơ quan duy nhất có quyền lập hiến và lập pháp, do đó chỉ Quốc hội mới có thẩm quyền ban hành văn bản luật." },
+        { id: "c2_11", chapter: 2, num: 11, q: "Văn bản nào sau đây không phải là văn bản luật?", opts: { A: "Nghị quyết của Ủy ban thường vụ Quốc hội", B: "Luật Hôn nhân và gia đình", C: "Hiến pháp", D: "Bộ luật Hàng hải" }, ans: "A", exp: "Nghị quyết của Ủy ban thường vụ Quốc hội là văn bản dưới luật (do UBTVQH ban hành, không phải do Quốc hội ban hành)." },
+        { id: "c2_12", chapter: 2, num: 12, q: "Văn bản nào sau đây có hiệu lực pháp lý cao nhất?", opts: { A: "Bộ luật Dân sự", B: "Bộ luật Hình sự", C: "Hiến pháp", D: "Bộ luật Lao động" }, ans: "C", exp: "Theo Điều 119 Hiến pháp 2013: Hiến pháp là luật cơ bản của nước CHXHCN Việt Nam, có hiệu lực pháp lý cao nhất. Mọi văn bản khác phải phù hợp với Hiến pháp." },
+        { id: "c2_13", chapter: 2, num: 13, q: "Văn bản nào sau đây là văn bản luật?", opts: { A: "Quyết định của Thủ tướng Chính phủ", B: "Lệnh của Chủ tịch nước", C: "Thông tư của Tổng Kiểm toán Nhà nước", D: "Bộ luật Tố tụng Hình sự" }, ans: "D", exp: "Bộ luật Tố tụng Hình sự do Quốc hội ban hành nên là văn bản luật. Các văn bản còn lại đều là văn bản dưới luật." },
+        { id: "c2_14", chapter: 2, num: 14, q: "Nghị định là văn bản quy phạm pháp luật do cơ quan nào ban hành?", opts: { A: "Quốc hội", B: "Chính phủ", C: "Hội đồng nhân dân cấp tỉnh", D: "Ủy ban nhân dân cấp tỉnh" }, ans: "B", exp: "Theo Luật Ban hành văn bản quy phạm pháp luật, Nghị định là văn bản QPPL do Chính phủ ban hành." },
+        { id: "c2_15", chapter: 2, num: 15, q: "Thành phần của quan hệ pháp luật bao gồm bao nhiêu bộ phận?", opts: { A: "2", B: "3", C: "4", D: "5" }, ans: "B", exp: "Cấu thành của quan hệ pháp luật gồm 3 bộ phận: Chủ thể, Khách thể và Nội dung (quyền và nghĩa vụ pháp lý của các bên)." },
+        { id: "c2_16", chapter: 2, num: 16, q: "Chủ thể của quan hệ pháp luật:", opts: { A: "Chỉ có thể là cá nhân", B: "Là cá nhân hoặc Nhà nước", C: "Là cá nhân, pháp nhân, Nhà nước", D: "Chỉ có thể là tổ chức" }, ans: "C", exp: "Chủ thể của quan hệ pháp luật là các bên tham gia vào quan hệ pháp luật có năng lực chủ thể, bao gồm: cá nhân, pháp nhân (tổ chức có tư cách pháp nhân) và Nhà nước (chủ thể đặc biệt)." },
+        { id: "c2_17", chapter: 2, num: 17, q: "Năng lực pháp luật của cá nhân xuất hiện khi:", opts: { A: "Cá nhân đó được sinh ra", B: "Cá nhân đó đủ 6 tuổi trở lên", C: "Cá nhân đó đủ 18 tuổi trở lên", D: "Nam đủ 20 tuổi trở lên, nữ đủ 18 tuổi trở lên" }, ans: "A", exp: "Theo Điều 16 Bộ luật Dân sự 2015: Năng lực pháp luật dân sự của cá nhân có từ khi người đó sinh ra và chấm dứt khi người đó chết." },
+        { id: "c2_18", chapter: 2, num: 18, q: "Năng lực pháp luật của cá nhân chấm dứt khi:", opts: { A: "Cá nhân đó bị Tòa án tuyên bố là người mất năng lực hành vi dân sự", B: "Cá nhân đó bị Tòa án tuyên bố là người bị hạn chế năng lực hành vi dân sự", C: "Cá nhân đó bị Tòa án tuyên bố là người có khó khăn trong nhận thức làm chủ hành vi", D: "Cá nhân đó chết đi" }, ans: "D", exp: "Năng lực pháp luật gắn liền với sự tồn tại của cá nhân và chỉ chấm dứt khi cá nhân đó chết (hoặc bị Tòa án tuyên bố là đã chết)." },
+        { id: "c2_19", chapter: 2, num: 19, q: "Sử dụng pháp luật là hình thức thực hiện pháp luật, trong đó:", opts: { A: "Chủ thể kiềm chế mình không thực hiện điều pháp luật cấm", B: "Chủ thể bằng hành vi tích cực của mình thực hiện điều pháp luật yêu cầu", C: "Chủ thể lựa chọn và thực hiện cách thức xử sự trong phạm vi pháp luật cho phép", D: "Tất cả đều sai" }, ans: "C", exp: "Sử dụng pháp luật là hình thức thực hiện các quy phạm trao quyền: chủ thể có quyền tự do lựa chọn thực hiện hoặc không thực hiện những hành vi mà pháp luật cho phép." },
+        { id: "c2_20", chapter: 2, num: 20, q: "Cá nhân không lái xe trong tình trạng say rượu là hình thức thực hiện pháp luật nào sau đây?", opts: { A: "Tuân thủ pháp luật", B: "Thi hành pháp luật", C: "Sử dụng pháp luật", D: "Áp dụng pháp luật" }, ans: "A", exp: "Tuân thủ pháp luật là việc chủ thể kiềm chế không thực hiện những hành vi mà pháp luật cấm (cấm lái xe khi có nồng độ cồn/say rượu)." },
+        { id: "c2_21", chapter: 2, num: 21, q: "Cảnh sát giao thông xử phạt người điều khiển xe máy vượt đèn đỏ là hình thức thực hiện pháp luật nào sau đây?", opts: { A: "Tuân thủ pháp luật", B: "Thi hành pháp luật", C: "Sử dụng pháp luật", D: "Áp dụng pháp luật" }, ans: "D", exp: "Áp dụng pháp luật là hoạt động mang tính quyền lực nhà nước do cơ quan/người có thẩm quyền (CSGT) thực hiện để giải quyết vụ việc cụ thể (ra quyết định xử phạt)." },
+        { id: "c2_22", chapter: 2, num: 22, q: "Vi phạm pháp luật là:", opts: { A: "Cá nhân hoặc tổ chức có năng lực trách nhiệm pháp lý đã thực hiện hành vi trái pháp luật, có lỗi", B: "Hành vi nguy hiểm cho xã hội, trái pháp luật, do người có năng lực trách nhiệm pháp lý thực hiện một cách cố ý hoặc vô ý, xâm hại hoặc đe dọa xâm hại đến các quan hệ xã hội được Nhà nước xác lập và bảo vệ", C: "Những quan hệ xã hội được các quy phạm pháp luật điều chỉnh", D: "Một quá trình hoạt động có mục đích làm cho những quy định của pháp luật đi vào cuộc sống trở thành những hành vi thực tế hợp pháp của các chủ thể pháp luật." }, ans: "B", exp: "Vi phạm pháp luật hội tụ đủ 4 dấu hiệu: là hành vi xác định của con người, trái pháp luật và nguy hiểm cho xã hội, có lỗi (cố ý/vô ý), và do chủ thể có năng lực trách nhiệm pháp lý thực hiện." },
+        { id: "c2_23", chapter: 2, num: 23, q: "Hành vi trái pháp luật là:", opts: { A: "Chủ thể làm một việc mà pháp luật cấm, sử dụng quyền vượt quá giới hạn mà pháp luật cho phép, hoặc không thực hiện nghĩa vụ mà nhà nước bắt buộc.", B: "Chủ thể làm một việc mà pháp luật cấm hoặc không thực hiện nghĩa vụ mà nhà nước yêu cầu phải làm", C: "Chủ thể sử dụng quyền vượt quá giới hạn mà pháp luật cho phép", D: "Tất cả đều sai" }, ans: "A", exp: "Hành vi trái pháp luật biểu hiện ở cả 3 dạng: làm điều pháp luật cấm, không làm điều pháp luật bắt buộc phải làm, hoặc sử dụng quyền vượt quá giới hạn pháp luật cho phép." },
+        { id: "c2_24", chapter: 2, num: 24, q: "Lỗi cố ý gián tiếp là:", opts: { A: "Lỗi của chủ thể vi phạm pháp luật trong trường hợp chủ thể nhận thức rõ hành vi của mình là nguy hiểm cho xã hội, thấy trước hậu quả của hành vi đó và mong muốn hậu quả đó xảy ra", B: "Lỗi của chủ thể vi phạm pháp luật trong trường hợp chủ thể nhận thức rõ hành vi của mình là nguy hiểm cho xã hội, thấy trước hậu quả của hành vi đó và tuy không mong muốn nhưng có ý thức để mặc cho hậu quả xảy ra", C: "Lỗi của chủ thể vi phạm pháp luật tuy thấy trước hành vi của mình có thể gây ra hậu quả nguy hại cho xã hội, nhưng cho rằng hậu quả đó sẽ không xảy ra hoặc có thể ngăn ngừa được", D: "Lỗi của chủ thể vi phạm pháp luật không thấy trước hành vi của mình có thể gây ra hậu quả nguy hại cho xã hội, mặc dù phải thấy trước và có thể thấy trước hậu quả này" }, ans: "B", exp: "Đặc trưng của lỗi cố ý gián tiếp là về lý trí thấy trước hậu quả có thể xảy ra, còn về ý chí tuy không mong muốn nhưng bỏ mặc cho hậu quả xảy ra." },
+        { id: "c2_25", chapter: 2, num: 25, q: "Mặt chủ quan của vi phạm pháp luật bao gồm:", opts: { A: "Lỗi, động cơ, mục đích của vi phạm pháp luật", B: "Hành vi, hậu quả, mối quan hệ nhân quả giữa hành vi và hậu quả, một số biểu hiện bên ngoài khác của vi phạm pháp luật", C: "Chủ thể, khách thể của vi phạm pháp luật", D: "Giả định, quy đinh, chế tài" }, ans: "A", exp: "Mặt chủ quan là trạng thái tâm lý bên trong của chủ thể vi phạm pháp luật, gồm 3 yếu tố: Lỗi (bắt buộc), Động cơ và Mục đích." },
+        { id: "c2_26", chapter: 2, num: 26, q: "Hậu quả của vi phạm pháp luật là dấu hiệu thuộc:", opts: { A: "Chủ thể của vi phạm pháp luật", B: "Khách thể của vi phạm pháp luật", C: "Mặt khách quan của vi phạm pháp luật", D: "Mặt chủ quan của vi phạm pháp luật" }, ans: "C", exp: "Mặt khách quan gồm các biểu hiện bên ngoài của vi phạm: hành vi trái pháp luật, hậu quả thiệt hại cho xã hội, mối quan hệ nhân quả, thời gian, địa điểm, công cụ..." },
+        { id: "c2_27", chapter: 2, num: 27, q: "Trách nhiệm hình sự là:", opts: { A: "Hậu quả pháp lí bất lợi đối với cá nhân hoặc tổ chức vi phạm hành chính, do các cơ quan quản lí nhà nước áp dụng", B: "Hậu quả pháp lí bất lợi đối với chủ thể vi phạm kỉ luật lao động, vi phạm các quy tắc và nghĩa vụ trong hoạt động, làm ảnh hưởng xấu đến uy tín của cơ quan, ngành nghề, lĩnh vực hoạt động của cơ quan đơn vị", C: "Hậu quả pháp lí bất lợi đối với cá nhân hoặc tổ chức không thực hiện hoặc thực hiện không đúng, không đầy đủ nghĩa vụ dân sự hoặc xâm hại lợi ích vật chất, tinh thần của cá nhân, pháp nhân hoặc các chủ thể khác", D: "Hậu quả pháp lý bất lợi của việc thực hiện hành vi phạm tội, được xác định bằng trình tự đặc biệt theo quy định của pháp luật, do Tòa án áp dụng đối với người hoặc pháp nhân thương mại phạm tội" }, ans: "D", exp: "Trách nhiệm hình sự là dạng trách nhiệm pháp lý nghiêm khắc nhất, chỉ do Tòa án áp dụng đối với cá nhân hoặc pháp nhân thương mại thực hiện hành vi phạm tội." },
+        { id: "c2_28", chapter: 2, num: 28, q: "Hành vi chạy quá tốc độ khi tham gia giao thông đường bộ là:", opts: { A: "Vi phạm pháp luật hình sự", B: "Vi phạm pháp luật dân sự", C: "Vi phạm pháp luật hành chính", D: "Vi phạm pháp luật kỷ luật" }, ans: "C", exp: "Chạy quá tốc độ quy định (chưa gây hậu quả nghiêm trọng đến mức truy cứu trách nhiệm hình sự) là hành vi xâm phạm quy tắc quản lý nhà nước về trật tự an toàn giao thông -> vi phạm hành chính." },
+        { id: "c2_29", chapter: 2, num: 29, q: "Lỗi của anh X khi dùng súng bắn nhiều phát vào đầu, ngực, bụng của anh Y dẫn đến hậu quả anh Y chết là:", opts: { A: "Lỗi cố ý trực tiếp", B: "Lỗi cố ý gián tiếp", C: "Lỗi vô ý vì quá tự tin", D: "Lỗi vô ý vì cẩu thả" }, ans: "A", exp: "Bắn nhiều phát vào các vùng trọng yếu (đầu, ngực, bụng) chứng tỏ chủ thể nhận thức rõ hành vi tước đoạt tính mạng và mong muốn hậu quả chết người xảy ra -> lỗi cố ý trực tiếp." },
+        { id: "c2_30", chapter: 2, num: 30, q: "Vi phạm pháp luật được chia thành:", opts: { A: "Vi phạm pháp luật hình sự (tội phạm), vi phạm pháp luật hành chính", B: "Vi phạm pháp luật hình sự (tội phạm), vi phạm pháp luật hành chính, vi phạm pháp luật dân sự, vi phạm pháp luật kỷ luật", C: "Vi phạm pháp luật hình sự (tội phạm), vi phạm pháp luật hành chính, vi phạm pháp luật dân sự, vi phạm pháp luật lao động, vi phạm pháp luật hôn nhân và gia đình", D: "Vi phạm pháp luật hình sự (tội phạm), vi phạm pháp luật tố tụng hình sự, vi phạm pháp luật hành chính, vi phạm pháp luật tố tụng hành chính, vi phạm pháp luật dân sự, vi phạm pháp luật tố tụng dân sự" }, ans: "B", exp: "Căn cứ vào tính chất và mức độ nguy hiểm cho xã hội, vi phạm pháp luật được phân chia thành 4 loại: Hình sự (tội phạm), Hành chính, Dân sự và Kỷ luật." },
+
+        // ==================== CHƯƠNG 3 (60 CÂU) ====================
+        { id: "c3_1", chapter: 3, num: 1, q: "Đối tượng điều chỉnh của luật dân sự Việt Nam là:", opts: { A: "Quan hệ xã hội phát sinh giữa Nhà nước và chủ thể của tội phạm khi chủ thể này thực hiện một tội phạm", B: "Quan hệ giữa người với người thông qua một tài sản", C: "Quan hệ nhân thân và quan hệ tài sản", D: "Các quan hệ xã hội phát sinh trong lĩnh vực quản lý hành chính nhà nước" }, ans: "C", exp: "Theo Điều 1 Bộ luật Dân sự 2015: Bộ luật Dân sự điều chỉnh quan hệ nhân thân và quan hệ tài sản của cá nhân, pháp nhân trong các quan hệ được hình thành trên cơ sở bình đẳng, tự do ý chí, độc lập về tài sản và tự chịu trách nhiệm." },
+        { id: "c3_2", chapter: 3, num: 2, q: "Khả năng của cá nhân bằng hành vi của mình xác lập, thực hiện quyền, nghĩa vụ dân sự là:", opts: { A: "Năng lực pháp luật dân sự", B: "Năng lực hành vi dân sự", C: "Năng lực trách nhiệm pháp lý", D: "Năng lực chủ thể" }, ans: "B", exp: "Theo Điều 19 BLDS 2015: Năng lực hành vi dân sự của cá nhân là khả năng của cá nhân bằng hành vi của mình xác lập, thực hiện quyền, nghĩa vụ dân sự." },
+        { id: "c3_3", chapter: 3, num: 3, q: "Theo quy định của Bộ luật Dân sự hiện hành, người thành niên là:", opts: { A: "Người có năng lực hành vi dân sự", B: "Người đủ 06 tuổi trở lên", C: "Người đủ 18 tuổi trở lên", D: "Nữ từ đủ 18 tuổi, nam từ đủ 20 tuổi trở lên" }, ans: "C", exp: "Theo Khoản 1 Điều 20 BLDS 2015: Người thành niên là người từ đủ mười tám tuổi trở lên." },
+        { id: "c3_4", chapter: 3, num: 4, q: "Giao dịch dân sự của người dưới 06 tuổi:", opts: { A: "Do người đại diện theo pháp luật của người đó xác lập, thực hiện, trừ giao dịch dân sự phục vụ nhu cầu sinh hoạt hàng ngày", B: "Được tự mình xác lập, thực hiện mọi giao dịch dân sự", C: "Do cha, mẹ của người đó xác lập, thực hiện", D: "Do người đại diện theo pháp luật của người đó xác lập, thực hiện" }, ans: "D", exp: "Theo Khoản 2 Điều 21 BLDS 2015: Giao dịch dân sự của người chưa đủ sáu tuổi do người đại diện theo pháp luật của người đó xác lập, thực hiện (không có ngoại lệ nhu cầu sinh hoạt hàng ngày như người từ đủ 6 đến dưới 15 tuổi)." },
+        { id: "c3_5", chapter: 3, num: 5, q: "Người từ đủ 15 tuổi đến chưa đủ 18 tuổi có thể tự mình xác lập giao dịch dân sự, trừ các giao dịch nào sau đây?", opts: { A: "Giao dịch dân sự có liên quan đến bất động sản", B: "Giao dịch dân sự khác theo quy định của luật phải được người đại diện theo pháp luật đồng ý", C: "Giao dịch dân sự liên quan đến động sản phải đăng ký", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Khoản 4 Điều 21 BLDS 2015: Người từ đủ 15 đến chưa đủ 18 tuổi tự mình xác lập, thực hiện giao dịch dân sự, trừ giao dịch liên quan đến bất động sản, động sản phải đăng ký và giao dịch khác theo quy định của luật phải được người đại diện theo pháp luật đồng ý." },
+        { id: "c3_6", chapter: 3, num: 6, q: "Tòa án căn cứ vào cơ sở nào để tuyên bố một người là người bị mất năng lực hành vi dân sự:", opts: { A: "Kết luận giám định pháp y tâm thần", B: "Xác nhận của chính quyền địa phương nơi người đó cư trú", C: "Lời khai của người làm chứng", D: "Tất cả đều đúng" }, ans: "A", exp: "Theo Khoản 1 Điều 22 BLDS 2015: Khi một người do bị bệnh tâm thần hoặc mắc bệnh khác mà không thể nhận thức, làm chủ được hành vi thì theo yêu cầu của người có quyền, lợi ích liên quan hoặc cơ quan, tổ chức hữu quan, Tòa án ra quyết định tuyên bố người này là người mất năng lực hành vi dân sự trên cơ sở kết luận giám định pháp y tâm thần." },
+        { id: "c3_7", chapter: 3, num: 7, q: "Người có khó khăn trong nhận thức, làm chủ hành vi là:", opts: { A: "Người bị bệnh tâm thần hoặc mắc bệnh khác mà không thể nhận thức, làm chủ được hành vi", B: "Người thành niên do tình trạng thể chất hoặc tinh thần mà không đủ khả năng nhận thức, làm chủ hành vi nhưng chưa đến mức mất năng lực hành vi dân sự", C: "Người nghiện ma túy, nghiện các chất kích thích khác dẫn đến phá tán tài sản của gia đình", D: "Người bị bệnh tâm thần hoặc mắc bệnh khác mà không thể nhận thức, làm chủ được hành vi; Người nghiện ma túy, nghiện các chất kích thích khác dẫn đến phá tán tài sản của gia đình" }, ans: "B", exp: "Theo Khoản 1 Điều 23 BLDS 2015: Người thành niên do tình trạng thể chất hoặc tinh thần mà không đủ khả năng nhận thức, làm chủ hành vi nhưng chưa đến mức mất năng lực hành vi dân sự thì Tòa án tuyên bố là người có khó khăn trong nhận thức, làm chủ hành vi." },
+        { id: "c3_8", chapter: 3, num: 8, q: "Người bị hạn chế năng lực hành vi dân sự là:", opts: { A: "Người bị bệnh tâm thần hoặc mắc bệnh khác mà không thể nhận thức, làm chủ được hành vi", B: "Người thành niên do tình trạng thể chất hoặc tinh thần mà không đủ khả năng nhận thức, làm chủ hành vi nhưng chưa đến mức mất năng lực hành vi dân sự", C: "Người nghiện ma túy, nghiện các chất kích thích khác dẫn đến phá tán tài sản của gia đình", D: "Người say do dùng rượu, bia hoặc các chất kích thích khác" }, ans: "C", exp: "Theo Khoản 1 Điều 24 BLDS 2015: Người nghiện ma túy, nghiện các chất kích thích khác dẫn đến phá tán tài sản của gia đình thì theo yêu cầu của người có quyền, lợi ích liên quan hoặc cơ quan, tổ chức hữu quan, Tòa án có thể ra quyết định tuyên bố người này là người bị hạn chế năng lực hành vi dân sự." },
+        { id: "c3_9", chapter: 3, num: 9, q: "Giao dịch dân sự có liên quan đến tài sản của người nghiện ma túy, nghiện các chất kích thích khác bị Tòa án tuyên bố là người bị hạn chế năng lực hành vi dân sự:", opts: { A: "Do người đó tự mình thực hiện", B: "Phải có sự đồng ý của người đại diện theo pháp luật, trừ giao dịch nhằm phục vụ nhu cầu sinh hoạt hàng ngày hoặc luật liên quan có quy định khác", C: "Phải có sự đồng ý của người giám hộ", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Khoản 2 Điều 24 BLDS 2015: Giao dịch dân sự liên quan đến tài sản của người bị Tòa án tuyên bố hạn chế năng lực hành vi dân sự phải có sự đồng ý của người đại diện theo pháp luật, trừ giao dịch nhằm phục vụ nhu cầu sinh hoạt hàng ngày hoặc luật liên quan có quy định khác." },
+        { id: "c3_10", chapter: 3, num: 10, q: "Năng lực pháp luật dân sự của pháp nhân phát sinh từ thời điểm nào?", opts: { A: "Từ thời điểm được cơ quan nhà nước có thẩm quyền thành lập hoặc cho phép thành lập", B: "Từ thời điểm ghi vào sổ đăng ký", C: "Từ thời điểm được cơ quan nhà nước có thẩm quyền thành lập hoặc cho phép thành lập; nếu pháp nhân phải đăng ký hoạt động thì năng lực pháp luật dân sự của pháp nhân phát sinh từ thời điểm ghi vào sổ đăng ký", D: "Từ thời điểm pháp nhân đó chính thức hoạt động" }, ans: "C", exp: "Theo Khoản 2 Điều 86 BLDS 2015: Năng lực pháp luật dân sự của pháp nhân phát sinh từ thời điểm được cơ quan nhà nước có thẩm quyền thành lập hoặc cho phép thành lập; nếu pháp nhân phải đăng ký hoạt động thì phát sinh từ thời điểm ghi vào sổ đăng ký." },
+        { id: "c3_11", chapter: 3, num: 11, q: "Trong các tài sản sau, tài sản nào dưới đây được coi là “vật”?", opts: { A: "Đô la Mỹ", B: "Quyền sở hữu trí tuệ", C: "Xe ô tô", D: "Cổ phiếu" }, ans: "C", exp: "Theo Điều 105 BLDS 2015, tài sản là vật, tiền, giấy tờ có giá và quyền tài sản. Đô la Mỹ là tiền; Cổ phiếu là giấy tờ có giá; Quyền SHTT là quyền tài sản; Xe ô tô là vật." },
+        { id: "c3_12", chapter: 3, num: 12, q: "Trong các tài sản sau, tài sản nào dưới đây không được coi là “tiền”?", opts: { A: "Đô la Mỹ", B: "Việt Nam đồng", C: "Nhân dân tệ", D: "Tiền âm phủ" }, ans: "D", exp: "Tiền trong dân sự phải là tiền tệ hợp pháp đang lưu hành do Nhà nước (Việt Nam hoặc nước ngoài) phát hành. Tiền âm phủ không phải là tiền theo quy định của pháp luật." },
+        { id: "c3_13", chapter: 3, num: 13, q: "Giấy tờ nào sau đây được coi là “giấy tờ có giá”?", opts: { A: "Giấy chứng nhận quyền sử dụng đất", B: "Hợp đồng chuyển giao công nghệ", C: "Trái phiếu", D: "Giấy đăng ký xe mô tô" }, ans: "C", exp: "Trái phiếu, cổ phiếu, kỳ phiếu, hối phiếu, tín phiếu... là giấy tờ có giá (trị giá được bằng tiền và chuyển giao được trong giao lưu dân sự). Giấy chứng nhận QSDĐ và đăng ký xe chỉ là giấy tờ xác nhận quyền." },
+        { id: "c3_14", chapter: 3, num: 14, q: "Quyền nào sau đây được coi là “quyền tài sản”?", opts: { A: "Quyền sở hữu trí tuệ", B: "Quyền chuyển đổi giới tính", C: "Quyền tự do kinh doanh", D: "Quyền tự do tín ngưỡng, tôn giáo" }, ans: "A", exp: "Theo Điều 115 BLDS 2015: Quyền tài sản là quyền trị giá được bằng tiền, bao gồm quyền tài sản đối với đối tượng quyền sở hữu trí tuệ, quyền sử dụng đất và các quyền tài sản khác." },
+        { id: "c3_15", chapter: 3, num: 15, q: "Bất động sản bao gồm:", opts: { A: "Đất đai, các tài sản khác gắn liền với đất đai", B: "Đất đai và nhà ở", C: "Đất đai, nhà, các tài sản gắn liền với đất đai và tài sản khác theo quy định của pháp luật", D: "Đất đai, nhà, công trình xây dựng gắn liền với đất đai, kể cả các tài sản gắn liền với nhà, công trình xây dựng đó, các tài sản khác gắn liền với đất đai và tài sản khác theo quy định của pháp luật" }, ans: "D", exp: "Theo Khoản 1 Điều 107 BLDS 2015: Bất động sản bao gồm: Đất đai; Nhà, công trình xây dựng gắn liền với đất đai; Tài sản khác gắn liền với đất đai, nhà, công trình xây dựng; Tài sản khác theo quy định của pháp luật." },
+        { id: "c3_16", chapter: 3, num: 16, q: "Trong các tài sản sau, tài sản nào là bất động sản?", opts: { A: "Xe ô tô", B: "Laptop", C: "Gia súc, gia cầm", D: "Đèn chùm pha lê được gắn lên trần phòng khách" }, ans: "D", exp: "Đèn chùm pha lê đã được gắn cố định lên trần phòng khách là tài sản khác gắn liền với nhà, công trình xây dựng nên được xác định là bất động sản theo Điều 107 BLDS 2015." },
+        { id: "c3_17", chapter: 3, num: 17, q: "Trong các tài sản sau, tài sản nào là bất động sản?", opts: { A: "Căn hộ chung cư", B: "Điện thoại di động", C: "Dây chuyền vàng", D: "Xe mô tô" }, ans: "A", exp: "Căn hộ chung cư là nhà ở, công trình xây dựng gắn liền với đất đai nên là bất động sản." },
+        { id: "c3_18", chapter: 3, num: 18, q: "Trong các tài sản sau, tài sản nào là động sản?", opts: { A: "Cây cối đang mọc trên đất", B: "Nhà ở", C: "Điều hòa nhiệt độ đang gắn trên tường", D: "Laptop" }, ans: "D", exp: "Theo Khoản 2 Điều 107 BLDS 2015: Động sản là những tài sản không phải là bất động sản. Laptop là động sản." },
+        { id: "c3_19", chapter: 3, num: 19, q: "Hợp đồng hoặc hành vi pháp lý đơn phương làm phát sinh, thay đổi hoặc chấm dứt quyền, nghĩa vụ dân sự là:", opts: { A: "Giao dịch dân sự", B: "Các biện pháp bảo đảm thực hiện nghĩa vụ dân sự", C: "Hợp đồng dân sự", D: "Trách nhiệm dân sự" }, ans: "A", exp: "Theo Điều 116 BLDS 2015: Giao dịch dân sự là hợp đồng hoặc hành vi pháp lý đơn phương làm phát sinh, thay đổi hoặc chấm dứt quyền, nghĩa vụ dân sự." },
+        { id: "c3_20", chapter: 3, num: 20, q: "Điều kiện có hiệu lực của giao dịch dân sự?", opts: { A: "Chủ thể có năng lực pháp luật dân sự", B: "Chủ thể tham gia giao dịch hoàn toàn tự nguyện", C: "Mục đích và nội dung của giao dịch không vi phạm điều cấm của pháp luật, không trái đạo đức xã hội", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Điều 117 BLDS 2015, giao dịch dân sự có hiệu lực khi có đủ các điều kiện về chủ thể, sự tự nguyện, mục đích và nội dung hợp pháp (và hình thức nếu luật quy định)." },
+        { id: "c3_21", chapter: 3, num: 21, q: "Giao dịch dân sự được thể hiện bằng?", opts: { A: "Lời nói, văn bản, hành vi cụ thể", B: "Văn bản", C: "Lời nói, phương tiện điện tử dưới hình thức thông điệp dữ liệu, hành vi cụ thể", D: "Phương tiện điện tử dưới hình thức thông điệp dữ liệu" }, ans: "A", exp: "Theo Khoản 1 Điều 119 BLDS 2015: Giao dịch dân sự được thể hiện bằng lời nói, bằng văn bản hoặc bằng hành vi cụ thể." },
+        { id: "c3_22", chapter: 3, num: 22, q: "Khi nào hình thức giao dịch dân sự trở thành điều kiện có hiệu lực của giao dịch dân sự?", opts: { A: "Khi các bên có sự thỏa thuận", B: "Khi luật có quy định", C: "Khi một bên tham gia giao dịch dân sự là người nước ngoài", D: "Tất cả đều đúng" }, ans: "B", exp: "Theo Khoản 2 Điều 117 BLDS 2015: Hình thức của giao dịch dân sự là điều kiện có hiệu lực của giao dịch dân sự trong trường hợp luật có quy định." },
+        { id: "c3_23", chapter: 3, num: 23, q: "Giao dịch dân sự thông qua phương tiện điện tử dưới hình thức thông điệp dữ liệu theo quy định của pháp luật về giao dịch điện tử được coi là:", opts: { A: "Giao dịch bằng lời nói", B: "Giao dịch bằng văn bản", C: "Giao dịch bằng hành vi cụ thể", D: "Giao dịch vô hiệu" }, ans: "B", exp: "Theo Khoản 1 Điều 119 BLDS 2015: Giao dịch dân sự thông qua phương tiện điện tử dưới hình thức thông điệp dữ liệu theo quy định của pháp luật về giao dịch điện tử được coi là giao dịch bằng văn bản." },
+        { id: "c3_24", chapter: 3, num: 24, q: "Theo Bộ luật dân sự hiện hành, đại diện là gì?", opts: { A: "Là việc một cá nhân tự nhân danh mình xác lập, thực hiện giao dịch dân sự.", B: "Là việc một cá nhân nhân danh và vì lợi ích của người khác xác lập, thực hiện giao dịch dân sự.", C: "Là việc cá nhân, pháp nhân nhân danh và vì lợi ích của cá nhân hoặc pháp nhân khác xác lập, thực hiện giao dịch dân sự.", D: "Là việc một cá nhân nhân danh và vì lợi ích của một pháp nhân xác lập, thực hiện giao dịch dân sự." }, ans: "C", exp: "Theo Khoản 1 Điều 134 BLDS 2015: Đại diện là việc cá nhân, pháp nhân (gọi chung là người đại diện) nhân danh và vì lợi ích của cá nhân hoặc pháp nhân khác (gọi chung là người được đại diện) xác lập, thực hiện giao dịch dân sự." },
+        { id: "c3_25", chapter: 3, num: 25, q: "Đại diện theo pháp luật của cá nhân bao gồm:", opts: { A: "Người giám hộ đối với người được giám hộ", B: "Cha, mẹ đối với con chưa thành niên.", C: "Người do Tòa án chỉ định.", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Điều 136 BLDS 2015, đại diện theo pháp luật của cá nhân gồm: Cha, mẹ đối với con chưa thành niên; Người giám hộ đối với người được giám hộ; Người do Tòa án chỉ định." },
+        { id: "c3_26", chapter: 3, num: 26, q: "Đại diện theo pháp luật của pháp nhân bao gồm:", opts: { A: "Người được pháp nhân chỉ định theo điều lệ", B: "Người có thẩm quyền đại diện theo quy định của pháp luật", C: "Người do Tòa án chỉ định trong quá trình tố tụng tại Tòa án", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Khoản 1 Điều 137 BLDS 2015, cả 3 đối tượng trên đều là người đại diện theo pháp luật của pháp nhân." },
+        { id: "c3_27", chapter: 3, num: 27, q: "Người được pháp nhân chỉ định theo điều lệ là:", opts: { A: "Người đại diện theo pháp luật của pháp nhân", B: "Người đại diện theo ủy quyền của pháp nhân", C: "Người giám hộ", D: "Tất cả đều sai" }, ans: "A", exp: "Theo Điểm a Khoản 1 Điều 137 BLDS 2015: Người được pháp nhân chỉ định theo điều lệ là người đại diện theo pháp luật của pháp nhân." },
+        { id: "c3_28", chapter: 3, num: 28, q: "Theo Bộ luật dân sự hiện hành, xét về độ tuổi, người đại diện theo ủy quyền là?", opts: { A: "Nữ từ 18 tuổi, nam từ 20 tuổi trở lên", B: "Nữ từ đủ 18 tuổi, nam từ đủ 20 tuổi trở lên", C: "Người đủ 15 tuổi trở lên", D: "Người đủ 18 tuổi trở lên" }, ans: "C", exp: "Theo Khoản 3 Điều 138 BLDS 2015: Người từ đủ 15 tuổi đến chưa đủ 18 tuổi có thể là người đại diện theo ủy quyền, trừ trường hợp pháp luật quy định giao dịch dân sự phải do người từ đủ 18 tuổi trở lên xác lập, thực hiện." },
+        { id: "c3_29", chapter: 3, num: 29, q: "Nhận định nào sau đây là đúng?", opts: { A: "Người đại diện có quyền xác lập giao dịch dân sự khi giao dịch nằm trong phạm vi đại diện theo quy định của pháp luật.", B: "Trong mọi trường hợp, người đại diện được quyền xác lập, thực hiện các giao dịch dân sự với người thứ ba mà mình cũng là người đại diện của người đó", C: "Người đại diện có quyền xác lập giao dịch dân sự bất cứ khi nào họ muốn", D: "Người đại diện có quyền xác lập giao dịch dân sự khi giao dịch dân sự đó có lợi cho người được đại diện" }, ans: "A", exp: "Theo Điều 141 BLDS 2015: Người đại diện chỉ được xác lập, thực hiện giao dịch dân sự trong phạm vi đại diện theo căn cứ pháp luật hoặc ủy quyền." },
+        { id: "c3_30", chapter: 3, num: 30, q: "Một khoảng thời gian được xác định từ thời điểm này đến thời điểm khác là:", opts: { A: "Thời hiệu", B: "Thời hạn", C: "Thời hiệu hưởng quyền dân sự", D: "Thời hiệu yêu cầu giải quyết việc dân sự" }, ans: "B", exp: "Theo Khoản 1 Điều 144 BLDS 2015: Thời hạn là một khoảng thời gian được xác định từ thời điểm này đến thời điểm khác." },
+        { id: "c3_31", chapter: 3, num: 31, q: "Thời hạn mà khi kết thúc thời hạn đó thì người có nghĩa vụ dân sự được miễn việc thực hiện nghĩa vụ là:", opts: { A: "Thời hiệu hưởng quyền dân sự", B: "Thời hiệu miễn trừ nghĩa vụ dân sự", C: "Thời hiệu khởi kiện", D: "Thời hiệu yêu cầu giải quyết việc dân sự" }, ans: "B", exp: "Theo Khoản 2 Điều 150 BLDS 2015: Thời hiệu miễn trừ nghĩa vụ dân sự là thời hạn mà khi kết thúc thời hạn đó thì người có nghĩa vụ dân sự được miễn việc thực hiện nghĩa vụ." },
+        { id: "c3_32", chapter: 3, num: 32, q: "Quyền sử dụng là:", opts: { A: "Quyền nắm giữ, chi phối tài sản", B: "Quyền khai thác công dụng, hưởng hoa lợi, lợi tức từ tài sản", C: "Quyền chuyển giao quyền sở hữu tài sản", D: "Quyền tiêu hủy tài sản." }, ans: "B", exp: "Theo Điều 189 BLDS 2015: Quyền sử dụng là quyền khai thác công dụng, hưởng hoa lợi, lợi tức từ tài sản." },
+        { id: "c3_33", chapter: 3, num: 33, q: "Quyền định đoạt tài sản là:", opts: { A: "Quyền nắm giữ, chi phối tài sản", B: "Quyền khai thác công dụng, hưởng hoa lợi, lợi tức từ tài sản", C: "Quyền chuyển giao quyền sở hữu tài sản, từ bỏ quyền sở hữu, tiêu dùng hoặc tiêu hủy tài sản.", D: "Tất cả đều sai" }, ans: "C", exp: "Theo Điều 192 BLDS 2015: Quyền định đoạt là quyền chuyển giao quyền sở hữu tài sản, từ bỏ quyền sở hữu, tiêu dùng hoặc tiêu hủy tài sản." },
+        { id: "c3_34", chapter: 3, num: 34, q: "Anh G thuê nhà của anh H để mở shop bán quần áo. Theo Bộ luật dân sự hiện hành, anh G có thể thực hiện hành vi nào sau đây?", opts: { A: "Chuyển nhượng quyền sở hữu căn nhà của anh H cho người khác", B: "Sử dụng nhà theo mục đích trong thời gian thuê", C: "Đập căn nhà của anh H để xây lại", D: "Tất cả đều đúng" }, ans: "B", exp: "Người thuê tài sản chỉ có quyền chiếm hữu và quyền sử dụng tài sản đúng mục đích trong thời hạn thuê, không có quyền định đoạt (bán, đập phá) tài sản của chủ sở hữu." },
+        { id: "c3_35", chapter: 3, num: 35, q: "Ai có quyền định đoạt tài sản?", opts: { A: "Chỉ chủ sở hữu tài sản", B: "Người không phải là chủ sở hữu tài sản", C: "Người đang chiếm hữu tài sản", D: "Chủ sở hữu tài sản, người không phải là chủ sở hữu tài sản khi có sự ủy quyền của chủ sở hữu hoặc theo quy định của luật." }, ans: "D", exp: "Theo Điều 194 và 195 BLDS 2015: Chủ sở hữu có quyền bán, trao đổi, tặng cho... Người không phải là chủ sở hữu chỉ có quyền định đoạt tài sản theo ủy quyền của chủ sở hữu hoặc theo quy định của luật." },
+        { id: "c3_36", chapter: 3, num: 36, q: "Quyền của chủ thể được khai thác công dụng và hưởng hoa lợi, lợi tức đối với tài sản thuộc quyền sở hữu của chủ thể khác trong một thời hạn nhất định là:", opts: { A: "Quyền sử dụng", B: "Quyền hưởng dụng", C: "Quyền định đoạt", D: "Quyền bề mặt" }, ans: "B", exp: "Theo Điều 257 BLDS 2015: Quyền hưởng dụng là quyền của chủ thể được khai thác công dụng và hưởng hoa lợi, lợi tức đối với tài sản thuộc quyền sở hữu của chủ thể khác trong một thời hạn nhất định." },
+        { id: "c3_37", chapter: 3, num: 37, q: "Đối tượng của nghĩa vụ dân sự là:", opts: { A: "Tài sản, công việc", B: "Công việc phải làm, công việc không được làm", C: "Tài sản, công việc phải làm, công việc không được làm", D: "Tài sản, công việc phải làm" }, ans: "C", exp: "Theo Khoản 1 Điều 276 BLDS 2015: Đối tượng của nghĩa vụ là tài sản, công việc phải thực hiện hoặc không được thực hiện." },
+        { id: "c3_38", chapter: 3, num: 38, q: "Khi nào trách nhiệm dân sự phát sinh?", opts: { A: "Bên có nghĩa vụ không thực hiện đúng nghĩa vụ do lỗi của bên có quyền", B: "Bên có nghĩa vụ thực hiện đúng nghĩa vụ", C: "Bên có nghĩa vụ vi phạm nghĩa vụ", D: "Bên có nghĩa vụ không thực hiện đúng nghĩa vụ do sự kiện bất khả kháng" }, ans: "C", exp: "Theo Khoản 1 Điều 351 BLDS 2015: Bên có nghĩa vụ mà vi phạm nghĩa vụ thì phải chịu trách nhiệm dân sự đối với bên có quyền." },
+        { id: "c3_39", chapter: 3, num: 39, q: "Vi phạm nghĩa vụ là:", opts: { A: "Việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn, thực hiện không đầy đủ nghĩa vụ hoặc thực hiện không đúng nội dung của nghĩa vụ.", B: "Việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn", C: "Việc bên có nghĩa vụ thực hiện đúng nghĩa vụ", D: "Việc bên có nghĩa vụ không thực hiện không đúng nội dung của nghĩa vụ." }, ans: "A", exp: "Theo Khoản 1 Điều 351 BLDS 2015: Vi phạm nghĩa vụ là việc bên có nghĩa vụ không thực hiện nghĩa vụ đúng thời hạn, thực hiện không đầy đủ nghĩa vụ hoặc thực hiện không đúng nội dung của nghĩa vụ." },
+        { id: "c3_40", chapter: 3, num: 40, q: "Trong trường hợp nào, bên có nghĩa vụ vi phạm nghĩa vụ không phải chịu trách nhiệm dân sự?", opts: { A: "Bên có nghĩa vụ không thực hiện đúng nghĩa vụ do sự kiện bất khả kháng thì không phải chịu trách nhiệm dân sự, trừ trường hợp có thoả thuận khác hoặc pháp luật có quy định khác", B: "Nghĩa vụ không thực hiện được là hoàn toàn do lỗi của bên có quyền", C: "Nghĩa vụ không thực hiện được một phần do lỗi của bên có quyền", D: "Bên có nghĩa vụ không thực hiện đúng nghĩa vụ do sự kiện bất khả kháng thì không phải chịu trách nhiệm dân sự, trừ trường hợp có thoả thuận khác hoặc pháp luật có quy định khác; Nghĩa vụ không thực hiện được hoàn toàn do lỗi của bên có quyền" }, ans: "D", exp: "Theo Khoản 2 và Khoản 3 Điều 351 BLDS 2015, người có nghĩa vụ được miễn trách nhiệm dân sự trong cả 2 trường hợp: do sự kiện bất khả kháng (trừ thỏa thuận/luật định khác) hoặc hoàn toàn do lỗi của bên có quyền." },
+        { id: "c3_41", chapter: 3, num: 41, q: "Biện pháp bảo đảm thực hiện nghĩa vụ dân sự nào sau đây yêu cầu bên bảo đảm phải giao tài sản cho bên nhận bảo đảm?", opts: { A: "Bảo lãnh", B: "Cầm cố tài sản", C: "Tín chấp", D: "Thế chấp" }, ans: "B", exp: "Theo Điều 309 BLDS 2015: Cầm cố tài sản là việc một bên (bên cầm cố) giao tài sản thuộc quyền sở hữu của mình cho bên kia (bên nhận cầm cố) để bảo đảm thực hiện nghĩa vụ. (Thế chấp thì không giao tài sản)." },
+        { id: "c3_42", chapter: 3, num: 42, q: "Ký quỹ là gì?", opts: { A: "Là việc bên có nghĩa vụ gửi một khoản tiền hoặc kim khí quý, đá quý hoặc giấy tờ có giá vào tài khoản phong tỏa tại một tổ chức tín dụng để bảo đảm việc thực hiện nghĩa vụ", B: "Là việc bên thuê tài sản là động sản giao cho bên cho thuê một khoản tiền hoặc kim khí quý, đá quý hoặc vật có giá trị khác trong một thời hạn để bảo đảm việc trả lại tài sản thuê", C: "Là việc người thứ ba cam kết với bên có quyền sẽ thực hiện nghĩa vụ thay cho bên có nghĩa vụ, nếu khi đến thời hạn thực hiện nghĩa vụ mà bên được bảo lãnh không thực hiện hoặc thực hiện không đúng nghĩa vụ", D: "Là việc một bên dùng tài sản thuộc sở hữu của mình để bảo đảm thực hiện nghĩa vụ và không giao tài sản cho bên kia" }, ans: "A", exp: "Theo Khoản 1 Điều 330 BLDS 2015: Ký quỹ là việc bên có nghĩa vụ gửi một khoản tiền hoặc kim khí quý, đá quý hoặc giấy tờ có giá vào tài khoản phong tỏa tại một tổ chức tín dụng để bảo đảm việc thực hiện nghĩa vụ." },
+        { id: "c3_43", chapter: 3, num: 43, q: "Việc bên có quyền đang nắm giữ hợp pháp tài sản là đối tượng của hợp đồng song vụ được chiếm giữ tài sản trong trường hợp bên có nghĩa vụ không thực hiện hoặc thực hiện không đúng nghĩa vụ là biện pháp bảo đảm thực hiện nghĩa vụ dân sự nào?", opts: { A: "Ký quỹ", B: "Cầm cố tài sản", C: "Cầm giữ tài sản", D: "Ký cược" }, ans: "C", exp: "Theo Điều 346 BLDS 2015: Cầm giữ tài sản là việc bên có quyền (bên cầm giữ) đang nắm giữ hợp pháp tài sản là đối tượng của hợp đồng song vụ được chiếm giữ tài sản trong trường hợp bên có nghĩa vụ không thực hiện hoặc thực hiện không đúng nghĩa vụ." },
+        { id: "c3_44", chapter: 3, num: 44, q: "Hợp đồng nào sau đây không được quy định trong luật dân sự?", opts: { A: "Hợp đồng gửi giữ tài sản", B: "Hợp đồng mua bán tài sản", C: "Hợp đồng thương mại (Hợp đồng mua bán hàng hóa; Hợp đồng cung ứng dịch vụ; Hợp đồng nhượng quyền thương mại…)", D: "Hợp đồng thuê tài sản" }, ans: "C", exp: "Hợp đồng nhượng quyền thương mại, hợp đồng mua bán hàng hóa... là các hợp đồng thương mại đặc thù được điều chỉnh trực tiếp bởi Luật Thương mại 2005." },
+        { id: "c3_45", chapter: 3, num: 45, q: "Hợp đồng nào sau đây là hợp đồng dân sự?", opts: { A: "Hợp đồng lao động", B: "Hợp đồng tặng cho tài sản", C: "Hợp đồng vận chuyển hàng hóa", D: "Hợp đồng nhượng quyền thương mại" }, ans: "B", exp: "Hợp đồng tặng cho tài sản được quy định từ Điều 457 đến Điều 462 Bộ luật Dân sự 2015." },
+        { id: "c3_46", chapter: 3, num: 46, q: "Các nguyên tắc nào sau đây là nguyên tắc giao kết hợp đồng dân sự?", opts: { A: "Tự do giao kết hợp đồng nhưng không được trái pháp luật, đạo đức xã hội; Tự nguyện, bình đẳng, thiện chí, hợp tác, trung thực và ngay thẳng", B: "Tự do giao kết hợp đồng; Tự nguyện, bình đẳng, thiện chí, trung thực", C: "Nhân đạo", D: "Tất cả đều sai" }, ans: "A", exp: "Tự do giao kết hợp đồng phải nằm trong khuôn khổ không trái pháp luật, đạo đức xã hội, đồng thời bảo đảm tự nguyện, bình đẳng, thiện chí, hợp tác, trung thực và ngay thẳng (Điều 3 BLDS 2015)." },
+        { id: "c3_47", chapter: 3, num: 47, q: "Trong trường hợp nào thì người gây thiệt hại không phải bồi thường?", opts: { A: "Trong trường hợp thiệt hại phát sinh là do sự kiện bất khả kháng", B: "Trong trường hợp thiệt hại phát sinh hoàn toàn do lỗi của bên bị thiệt hại", C: "Trong trường hợp thiệt hại phát sinh là do sự kiện bất khả kháng hoặc hoàn toàn do lỗi của bên bị thiệt hại, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác", D: "Trong trường hợp người gây thiệt hại không có tài sản" }, ans: "C", exp: "Theo Khoản 2 Điều 584 BLDS 2015: Người gây thiệt hại không phải chịu trách nhiệm bồi thường thiệt hại trong trường hợp thiệt hại phát sinh là do sự kiện bất khả kháng hoặc hoàn toàn do lỗi của bên bị thiệt hại, trừ trường hợp có thỏa thuận khác hoặc luật có quy định khác." },
+        { id: "c3_48", chapter: 3, num: 48, q: "Thiệt hại do con đủ 15 tuổi đến chưa đủ 18 tuổi gây ra thì ai có trách nhiệm bồi thường?", opts: { A: "Cha mẹ bồi thường, khi tài sản cha mẹ không đủ mà con có tài sản riêng lấy tài sản của con để bồi thường", B: "Con phải bồi thường, khi tài sản của con không đủ, lấy tài sản cha mẹ để bồi thường", C: "Con phải tự bồi thường toàn bộ thiệt hại", D: "Cha mẹ phải bồi thường toàn bộ thiệt hại" }, ans: "B", exp: "Theo Khoản 2 Điều 586 BLDS 2015: Người từ đủ 15 tuổi đến chưa đủ 18 tuổi gây thiệt hại thì phải bồi thường bằng tài sản của mình; nếu không đủ tài sản để bồi thường thì cha, mẹ phải bồi thường phần còn thiếu bằng tài sản của mình." },
+        { id: "c3_49", chapter: 3, num: 49, q: "Người bao nhiêu tuổi trở lên gây thiệt hại thì phải tự bồi thường bằng tài sản của mình?", opts: { A: "Ở bất kỳ độ tuổi nào nếu có tài sản riêng", B: "Đủ 18 tuổi trở lên", C: "Đủ 15 tuổi trở lên nếu có tài sản riêng", D: "Đủ 06 tuổi trở lên nếu có tài sản riêng" }, ans: "B", exp: "Theo Khoản 1 Điều 586 BLDS 2015: Người từ đủ mười tám tuổi trở lên gây thiệt hại thì phải tự bồi thường." },
+        { id: "c3_50", chapter: 3, num: 50, q: "Trong trường hợp tài sản gây thiệt hại, ai sẽ phải chịu trách nhiệm bồi thường?", opts: { A: "Chủ sở hữu tài sản", B: "Người chiếm hữu tài sản", C: "Chủ sở hữu tài sản hoặc người chiếm hữu tài sản", D: "Không ai phải bồi thường" }, ans: "C", exp: "Theo Khoản 3 Điều 584 BLDS 2015: Trường hợp tài sản gây thiệt hại thì chủ sở hữu, người chiếm hữu tài sản phải chịu trách nhiệm bồi thường thiệt hại." },
+        { id: "c3_51", chapter: 3, num: 51, q: "Người thừa kế tài sản là cá nhân phải là:", opts: { A: "Vợ hoặc chồng của người để lại di sản", B: "Người còn sống vào thời điểm mở thừa kế hoặc sinh ra và còn sống sau thời điểm mở thừa kế nhưng đã thành thai trước khi người để lại di sản chết", C: "Người thành niên vào thời điểm mở thừa kế", D: "Người có quan hệ huyết thống với người để lại di sản" }, ans: "B", exp: "Theo Điều 613 BLDS 2015: Người thừa kế là cá nhân phải là người còn sống vào thời điểm mở thừa kế hoặc sinh ra và còn sống sau thời điểm mở thừa kế nhưng đã thành thai trước khi người để lại di sản chết." },
+        { id: "c3_52", chapter: 3, num: 52, q: "Thời hiệu để người thừa kế yêu cầu chia di sản là?", opts: { A: "10 năm, kể từ thời điểm mở thừa kế", B: "03 năm, kể từ thời điểm mở thừa kế", C: "30 năm đối với bất động sản, 10 năm đối với động sản, kể từ thời điểm mở thừa kế", D: "20 năm đối với bất động sản, 15 năm đối với động sản, kể từ thời điểm mở thừa kế" }, ans: "C", exp: "Theo Khoản 1 Điều 623 BLDS 2015: Thời hiệu để người thừa kế yêu cầu chia di sản là 30 năm đối với bất động sản, 10 năm đối với động sản, kể từ thời điểm mở thừa kế." },
+        { id: "c3_53", chapter: 3, num: 53, q: "Nhận định nào sau đây là đúng?", opts: { A: "Người lập di chúc có thể lập di chúc bằng văn bản hoặc di chúc miệng", B: "Người lập di chúc chỉ được lập di chúc bằng văn bản", C: "Người không biết chữ chỉ được lập di chúc miệng", D: "Người dưới 15 tuổi được lập di chúc bằng văn bản" }, ans: "A", exp: "Theo Điều 627 BLDS 2015: Di chúc phải được lập thành văn bản; nếu không thể lập được di chúc bằng văn bản thì có thể di chúc miệng (khi tính mạng bị đe dọa)." },
+        { id: "c3_54", chapter: 3, num: 54, q: "Người được hưởng di sản thừa kế theo di chúc là:", opts: { A: "Chỉ có thể là cá nhân", B: "Chỉ có thể là tổ chức", C: "Bất kỳ ai mà người để lại di sản muốn: cá nhân, tổ chức", D: "Chỉ có thể là người thân thích với người để lại di sản" }, ans: "C", exp: "Theo Điều 613 và 626 BLDS 2015, người lập di chúc có quyền chỉ định bất kỳ cá nhân hoặc tổ chức nào (kể cả không có quan hệ huyết thống) làm người thừa kế." },
+        { id: "c3_55", chapter: 3, num: 55, q: "Những người nào sau đây được hưởng di sản không phụ thuộc vào nội dung di chúc?", opts: { A: "Ông, bà, cha, mẹ của người để lại di chúc", B: "Vợ, chồng, con của người để lại di chúc", C: "Anh, chị, em ruột của người để lại di chúc nếu không còn cha, mẹ", D: "Cha mẹ, vợ chồng, con chưa thành niên, con đã thành niên nhưng không có khả năng lao động của người để lại di chúc" }, ans: "D", exp: "Theo Khoản 1 Điều 644 BLDS 2015: Con chưa thành niên, cha, mẹ, vợ, chồng; Con thành niên mà không có khả năng lao động vẫn được hưởng phần di sản bằng 2/3 suất của một người thừa kế theo pháp luật nếu không được người lập di chúc cho hưởng hoặc cho hưởng ít hơn." },
+        { id: "c3_56", chapter: 3, num: 56, q: "Theo Điều 644 BLDS hiện hành, con chưa thành niên nếu không được người lập di chúc cho hưởng di sản:", opts: { A: "Vẫn được hưởng phần di sản bằng hai phần ba suất của một người thừa kế theo pháp luật nếu di sản được chia theo pháp luật", B: "Không được hưởng di sản", C: "Vẫn được hưởng phần di sản bằng suất của một người thừa kế theo pháp luật nếu di sản được chia theo pháp luật", D: "Vẫn được hưởng phần di sản bằng một phần hai suất của một người thừa kế theo pháp luật nếu di sản được chia theo pháp luật" }, ans: "A", exp: "Theo Điều 644 BLDS 2015: Mức hưởng tối thiểu bắt buộc của đối tượng thừa kế không phụ thuộc nội dung di chúc là bằng 2/3 suất của một người thừa kế theo pháp luật." },
+        { id: "c3_57", chapter: 3, num: 57, q: "Khi nào thì chia thừa kế theo pháp luật?", opts: { A: "Khi không có di chúc hoặc di chúc không hợp pháp", B: "Những người được chỉ định làm người thừa kế theo di chúc mà không có quyền hưởng di sản hoặc từ chối nhận di sản", C: "Những người thừa kế theo di chúc chết trước hoặc chết cùng thời điểm với người lập di chúc; cơ quan, tổ chức được hưởng thừa kế theo di chúc không còn tồn tại vào thời điểm mở thừa kế", D: "Tất cả các đáp án trên" }, ans: "D", exp: "Theo Khoản 1 Điều 650 BLDS 2015, tất cả các trường hợp nêu trên đều áp dụng thừa kế theo pháp luật." },
+        { id: "c3_58", chapter: 3, num: 58, q: "Người nào sau đây không phải người thừa kế theo pháp luật?", opts: { A: "Vợ hoặc chồng của người chết", B: "Con đẻ, con nuôi của người chết", C: "Cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi của người chết", D: "Cha vợ, mẹ vợ, cha chồng, mẹ chồng của người chết" }, ans: "D", exp: "Theo Điều 651 BLDS 2015, quan hệ thừa kế theo pháp luật chỉ dựa trên quan hệ hôn nhân (vợ-chồng), huyết thống và nuôi dưỡng (cha nuôi, mẹ nuôi, con nuôi). Cha mẹ vợ/chồng không thuộc các hàng thừa kế." },
+        { id: "c3_59", chapter: 3, num: 59, q: "Người nào sau đây không thuộc hàng thừa kế thứ nhất?", opts: { A: "Vợ hoặc chồng của người chết", B: "Con đẻ, con nuôi của người chết", C: "Cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi của người chết", D: "Anh, chị, em ruột của người chết" }, ans: "D", exp: "Theo Điểm a Khoản 1 Điều 651 BLDS 2015: Hàng thừa kế thứ nhất gồm: vợ, chồng, cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi, con đẻ, con nuôi của người chết. Anh, chị, em ruột thuộc hàng thừa kế thứ hai." },
+        { id: "c3_60", chapter: 3, num: 60, q: "Khi chia thừa kế theo pháp luật, chắt ruột của người chết mà người chết là cụ nội, cụ ngoại:", opts: { A: "Thuộc hàng thừa kế thứ nhất", B: "Thuộc hàng thừa kế thứ hai", C: "Thuộc hàng thừa kế thứ ba", D: "Không thuộc bất kỳ hàng thừa kế nào" }, ans: "C", exp: "Theo Điểm c Khoản 1 Điều 651 BLDS 2015: Hàng thừa kế thứ ba gồm: cụ nội, cụ ngoại của người chết; bác ruột, chú ruột, cậu ruột, cô ruột, dì ruột của người chết; cháu ruột của người chết mà người chết là bác/chú/cậu/cô/dì; chắt ruột của người chết mà người chết là cụ nội, cụ ngoại." },
+
+        // ==================== CHƯƠNG 4 (85 CÂU) ====================
+        { id: "c4_1", chapter: 4, num: 1, q: "Quan hệ xã hội phát sinh trong việc thuê mướn, sử dụng lao động, trả lương giữa người lao động và người sử dụng lao động, các tổ chức đại diện của các bên, cơ quan nhà nước có thẩm quyền là:", opts: { A: "Quan hệ lao động", B: "Quan hệ xã hội liên quan trực tiếp đến quan hệ lao động", C: "Quan hệ pháp luật dân sự", D: "Quan hệ pháp luật hình sự" }, ans: "A", exp: "Theo Khoản 5 Điều 3 Bộ luật Lao động 2019: Quan hệ lao động là quan hệ xã hội phát sinh trong việc thuê mướn, sử dụng lao động, trả lương giữa người lao động, người sử dụng lao động, các tổ chức đại diện của các bên, cơ quan nhà nước có thẩm quyền." },
+        { id: "c4_2", chapter: 4, num: 2, q: "Người sử dụng lao động:", opts: { A: "Chỉ có thể là các doanh nghiệp", B: "Chỉ có thể là cá nhân", C: "Có thể là cá nhân hoặc doanh nghiệp", D: "Có thể là doanh nghiệp, cơ quan, tổ chức, hợp tác xã, hộ gia đình, cá nhân" }, ans: "D", exp: "Theo Khoản 2 Điều 3 BLLĐ 2019: Người sử dụng lao động là doanh nghiệp, cơ quan, tổ chức, hợp tác xã, hộ gia đình, cá nhân có thuê mướn, sử dụng người lao động làm việc cho mình theo thỏa thuận." },
+        { id: "c4_3", chapter: 4, num: 3, q: "Điều kiện của người sử dụng lao động là cá nhân:", opts: { A: "Phải là người đủ 21 tuổi trở lên", B: "Phải có tài sản riêng", C: "Phải có năng lực hành vi dân sự đầy đủ", D: "Phải là người đứng đầu doanh nghiệp" }, ans: "C", exp: "Theo Khoản 2 Điều 3 BLLĐ 2019: Trường hợp người sử dụng lao động là cá nhân thì phải có năng lực hành vi dân sự đầy đủ." },
+        { id: "c4_4", chapter: 4, num: 4, q: "Người lao động chưa thành niên chỉ được làm các công việc nào sau đây?", opts: { A: "Mọi công việc, nếu được sự đồng ý của cha, mẹ hoặc người giám hộ", B: "Công việc phù hợp với sức khỏe để bảo đảm sự phát triển thể lực, trí lực, nhân cách", C: "Chỉ được làm các công việc nghệ thuật, thể dục, thể thao", D: "Chỉ được phép các công việc bán thời gian dưới sự giám sát của cơ quan quản lý lao động" }, ans: "B", exp: "Theo Khoản 1 Điều 144 BLLĐ 2019: Người lao động chưa thành niên chỉ được làm công việc phù hợp với sức khỏe để bảo đảm sự phát triển thể lực, trí lực, nhân cách." },
+        { id: "c4_5", chapter: 4, num: 5, q: "Theo quy định của pháp luật hiện hành, cấm sử dụng người từ đủ 15 tuổi đến dưới 18 tuổi làm việc ở nơi nào sau đây?", opts: { A: "Sòng bạc, quán bar, vũ trường, phòng hát karaoke", B: "Khách sạn, nhà nghỉ, cơ sở tắm hơi, cơ sở xoa bóp", C: "Điểm kinh doanh xổ số, dịch vụ trò chơi điện tử", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Khoản 2 Điều 147 BLLĐ 2019, tất cả các cơ sở nêu trên đều thuộc danh mục nơi làm việc bị cấm sử dụng người lao động từ đủ 15 tuổi đến chưa đủ 18 tuổi." },
+        { id: "c4_6", chapter: 4, num: 6, q: "Người lao động từ bao nhiêu tuổi được tự mình giao kết hợp đồng lao động?", opts: { A: "Từ đủ 13 tuổi", B: "Từ đủ 15 tuổi", C: "Từ đủ 16 tuổi", D: "Từ đủ 18 tuổi" }, ans: "D", exp: "Theo Điểm a Khoản 4 Điều 18 BLLĐ 2019: Người lao động từ đủ 18 tuổi trở lên được tự mình giao kết hợp đồng lao động (từ đủ 15 đến chưa đủ 18 phải có sự đồng ý bằng văn bản của người đại diện theo pháp luật)." },
+        { id: "c4_7", chapter: 4, num: 7, q: "Trong các hành vi sau, hành vi nào không được xem là phân biệt đối xử trong lao động?", opts: { A: "Phân biệt đối xử về tiền lương giữa những người khác giới tính ở cùng một vị trí công việc", B: "Chuyển người lao động làm công việc khác vì lý do gia nhập hoặc hoạt động công đoàn", C: "Không tuyển dụng người lao động nữ vì lý do đã có gia đình", D: "Ưu tiên cho người có kỹ năng phù hợp hơn với yêu cầu công việc đặc thù" }, ans: "D", exp: "Theo Khoản 8 Điều 3 BLLĐ 2019: Việc phân biệt, loại trừ hoặc ưu tiên xuất phát từ yêu cầu đặc thù của công việc và các hành vi duy trì, bảo vệ việc làm cho người lao động dễ bị tổn thương thì không bị xem là phân biệt đối xử." },
+        { id: "c4_8", chapter: 4, num: 8, q: "Thời hạn tập nghề để làm việc cho người sử dụng lao động:", opts: { A: "Không quá 01 tháng", B: "Không quá 03 tháng", C: "Không quá 06 tháng", D: "Không quá 01 năm" }, ans: "B", exp: "Theo Khoản 2 Điều 61 BLLĐ 2019: Thời hạn tập nghề không quá 03 tháng." },
+        { id: "c4_9", chapter: 4, num: 9, q: "Học nghề để làm việc cho người sử dụng lao động là:", opts: { A: "Việc người sử dụng lao động tuyển người vào để đào tạo nghề nghiệp tại nơi làm việc", B: "Việc người sử dụng lao động tuyển người vào để đào tạo nghề nghiệp tại một cơ sở giáo dục nghề nghiệp", C: "Việc người sử dụng lao động tuyển người vào để hướng dẫn thực hành công việc, tập làm nghề theo vị trí việc làm tại nơi làm việc", D: "Việc người sử dụng lao động tuyển người vào để hướng dẫn thực hành công việc, tập làm nghề theo vị trí việc làm tại một cơ sở giáo dục nghề nghiệp" }, ans: "A", exp: "Theo Khoản 1 Điều 61 BLLĐ 2019: Học nghề để làm việc cho người sử dụng lao động là việc người sử dụng lao động tuyển người vào để đào tạo nghề nghiệp tại nơi làm việc (Còn C là khái niệm Tập nghề)." },
+        { id: "c4_10", chapter: 4, num: 10, q: "Khi người sử dụng lao động tuyển người vào học nghề để làm việc cho mình, điều kiện nào sau đây không phải là điều kiện bắt buộc?", opts: { A: "Người học nghề có đủ sức khỏe phù hợp với yêu cầu học nghề", B: "Người học nghề phải từ đủ 14 tuổi trở lên", C: "Người học nghề phải có bằng tốt nghiệp trung học phổ thông trở lên", D: "Người học nghề thuộc danh mục nghề, công việc nặng nhọc phải từ đủ 18 tuổi trở lên, trừ lĩnh vực nghệ thuật, thể dục, thể thao." }, ans: "C", exp: "Theo Khoản 3 Điều 61 BLLĐ 2019, pháp luật chỉ yêu cầu người học nghề từ đủ 14 tuổi trở lên và có đủ sức khỏe phù hợp, không bắt buộc phải có bằng tốt nghiệp THPT." },
+        { id: "c4_11", chapter: 4, num: 11, q: "Có mấy loại hợp đồng lao động?", opts: { A: "Có 02 loại hợp đồng lao động là hợp đồng không xác định thời hạn và hợp đồng lao động xác định thời hạn", B: "Có 02 loại hợp đồng lao động là hợp đồng lao động bằng văn bản, hợp đồng lao động bằng lời nói", C: "Có 03 loại hợp đồng lao động là hợp đồng lao động không xác định thời hạn, hợp đồng lao động xác định thời hạn, hợp đồng theo mùa vụ", D: "Có 03 loại hợp đồng lao động là hợp đồng lao động bằng văn bản, hợp đồng lao động bằng lời nói, hợp đồng lao động thông qua phương tiện điện tử" }, ans: "A", exp: "Theo Khoản 1 Điều 20 BLLĐ 2019 (đã bỏ hợp đồng mùa vụ): Hợp đồng lao động phải được giao kết theo một trong 02 loại: Hợp đồng lao động không xác định thời hạn và Hợp đồng lao động xác định thời hạn." },
+        { id: "c4_12", chapter: 4, num: 12, q: "Hợp đồng lao động nào sau đây có thể giao kết bằng lời nói?", opts: { A: "Hợp đồng lao động có thời hạn dưới 01 tháng", B: "Hợp đồng lao động có thời hạn dưới 01 tháng, trừ trường hợp quy định tại khoản 2 Điều 18, điểm a khoản 1 Điều 145 và khoản 1 Điều 162 của BLLĐ", C: "Hợp đồng lao động có thời hạn", D: "Hợp đồng lao động không xác định thời hạn" }, ans: "B", exp: "Theo Khoản 2 Điều 14 BLLĐ 2019: Hai bên có thể giao kết hợp đồng lao động bằng lời nói đối với hợp đồng có thời hạn dưới 01 tháng, trừ trường hợp quy định tại khoản 2 Điều 18, điểm a khoản 1 Điều 145 và khoản 1 Điều 162 của Bộ luật này." },
+        { id: "c4_13", chapter: 4, num: 13, q: "Nguyên tắc nào sau đây là nguyên tắc giao kết hợp đồng lao động?", opts: { A: "Tự nguyện, bình đẳng, thiện chí, hợp tác và trung thực", B: "Nhân đạo", C: "Dân chủ", D: "Pháp chế" }, ans: "A", exp: "Theo Khoản 1 Điều 15 BLLĐ 2019: Nguyên tắc giao kết hợp đồng lao động là tự nguyện, bình đẳng, thiện chí, hợp tác và trung thực." },
+        { id: "c4_14", chapter: 4, num: 14, q: "Ai là người có thẩm quyền ký kết hợp đồng lao động bên phía người sử dụng lao động?", opts: { A: "Giám đốc nhân sự", B: "Người đại diện theo pháp luật hoặc người đại diện theo ủy quyền", C: "Bất kỳ nhân viên quản lý nào", D: "Người đại diện theo pháp luật" }, ans: "B", exp: "Theo Khoản 3 Điều 18 BLLĐ 2019: Người giao kết hợp đồng lao động bên phía người sử dụng lao động là người đại diện theo pháp luật của doanh nghiệp hoặc người được ủy quyền theo quy định của pháp luật." },
+        { id: "c4_15", chapter: 4, num: 15, q: "Hợp đồng lao động xác định thời hạn có thời hạn tối đa là:", opts: { A: "12 tháng", B: "24 tháng", C: "36 tháng", D: "Không có thời hạn tối đa, tùy theo thỏa thuận giữa người lao động và người sử dụng lao động" }, ans: "C", exp: "Theo Điểm b Khoản 1 Điều 20 BLLĐ 2019: Hợp đồng lao động xác định thời hạn là hợp đồng mà trong đó hai bên xác định thời hạn, thời điểm chấm dứt hiệu lực của hợp đồng trong thời gian không quá 36 tháng kể từ thời điểm có hiệu lực của hợp đồng." },
+        { id: "c4_16", chapter: 4, num: 16, q: "Khi hợp đồng lao động xác định thời hạn hết hạn, hai bên không ký hợp đồng lao động mới mà người lao động vẫn tiếp tục làm việc cho người sử dụng lao động thì:", opts: { A: "Hợp đồng lao động xác định thời hạn được chuyển thành hợp đồng không xác định thời hạn", B: "Hợp đồng lao động xác định thời hạn đó được gia hạn theo thời hạn đã giao kết trong hợp đồng lao động trước đó", C: "Hợp đồng lao động vô hiệu", D: "Tất cả đều sai" }, ans: "A", exp: "Theo Điểm b Khoản 2 Điều 20 BLLĐ 2019: Nếu hết thời hạn 30 ngày kể từ ngày HĐLĐ hết hạn mà hai bên không ký kết HĐLĐ mới thì hợp đồng đã giao kết trở thành hợp đồng lao động không xác định thời hạn." },
+        { id: "c4_17", chapter: 4, num: 17, q: "Hợp đồng lao động xác định thời hạn chỉ được ký thêm một lần, trừ trường hợp nào sau đây?", opts: { A: "Hợp đồng lao động thông qua phương tiện điện tử", B: "Hợp đồng lao động đối với người được thuê làm giám đốc trong doanh nghiệp có vốn nhà nước", C: "Hợp đồng lao động có thời hạn dưới 01 tháng", D: "Người lao động và người sử dụng lao động thỏa thuận tiếp tục ký hợp đồng lao động xác định thời hạn" }, ans: "B", exp: "Theo Điểm c Khoản 2 Điều 20 BLLĐ 2019: Chỉ được ký thêm 01 lần HĐLĐ xác định thời hạn, trừ trường hợp đối với người được thuê làm giám đốc trong doanh nghiệp có vốn nhà nước, người lao động cao tuổi, người lao động nước ngoài và cán bộ công đoàn không chuyên trách." },
+        { id: "c4_18", chapter: 4, num: 18, q: "Loại hợp đồng nào sau đây mà trong đó hai bên không xác định thời hạn, thời điểm chấm dứt hiệu lực của hợp đồng?", opts: { A: "Hợp đồng lao động không xác định thời hạn", B: "Hợp đồng xác định thời hạn", C: "Hợp đồng lao động thông qua phương tiện điện tử", D: "Hợp đồng lao động bằng lời nói" }, ans: "A", exp: "Theo Điểm a Khoản 1 Điều 20 BLLĐ 2019: Hợp đồng lao động không xác định thời hạn là hợp đồng mà trong đó hai bên không xác định thời hạn, thời điểm chấm dứt hiệu lực của hợp đồng." },
+        { id: "c4_19", chapter: 4, num: 19, q: "Nhận định nào sau đây là sai?", opts: { A: "Hợp đồng lao động phải được giao kết bằng văn bản", B: "Hợp đồng lao động phải được giao kết bằng phương tiện điện tử", C: "Hai bên có thể giao kết hợp đồng lao động bằng lời nói đối với hợp đồng có thời hạn dưới 01 tháng, trừ một trường hợp theo quy định của pháp luật", D: "Tất cả các đáp án trên" }, ans: "D", exp: "Cả 3 nhận định đều sai/không chính xác về mặt câu chữ pháp lý (HĐLĐ có thể bằng văn bản, điện tử hoặc lời nói dưới 1 tháng; câu C thiếu chữ 'số' làm sai nghĩa thành 'một trường hợp')." },
+        { id: "c4_20", chapter: 4, num: 20, q: "Đối với người lao động giao kết hợp đồng lao động có thời hạn dưới 01 tháng thì:", opts: { A: "Không áp dụng thử việc", B: "Thời gian thử việc không quá 6 ngày", C: "Thời gian thử việc không quá 6 ngày làm việc", D: "Thời gian thử việc không quá 15 ngày" }, ans: "A", exp: "Theo Khoản 3 Điều 24 BLLĐ 2019: Không áp dụng thử việc đối với người lao động giao kết hợp đồng lao động có thời hạn dưới 01 tháng." },
+        { id: "c4_21", chapter: 4, num: 21, q: "Thời gian thử việc đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên là:", opts: { A: "Không quá 6 ngày", B: "Không quá 30 ngày", C: "Không quá 60 ngày", D: "Không quá 180 ngày" }, ans: "C", exp: "Theo Khoản 2 Điều 25 BLLĐ 2019: Không quá 60 ngày đối với công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên." },
+        { id: "c4_22", chapter: 4, num: 22, q: "Thời gian thử việc cho công việc của người quản lý doanh nghiệp là:", opts: { A: "Không quá 6 ngày", B: "Không quá 30 ngày", C: "Không quá 60 ngày", D: "Không quá 180 ngày" }, ans: "D", exp: "Theo Khoản 1 Điều 25 BLLĐ 2019: Không quá 180 ngày đối với công việc của người quản lý doanh nghiệp theo quy định của Luật Doanh nghiệp..." },
+        { id: "c4_23", chapter: 4, num: 23, q: "Đối với công việc nào sau đây thì thời gian thử việc không quá 06 ngày làm việc?", opts: { A: "Công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật trung cấp, công nhân kỹ thuật, nhân viên nghiệp vụ", B: "Công việc có chức danh nghề nghiệp cần trình độ chuyên môn, kỹ thuật từ cao đẳng trở lên", C: "Công việc của người quản lý doanh nghiệp theo quy định của Luật Doanh nghiệp, Luật Quản lý, sử dụng vốn nhà nước đầu tư vào sản xuất, kinh doanh tại doanh nghiệp", D: "Công việc khác" }, ans: "D", exp: "Theo Khoản 4 Điều 25 BLLĐ 2019: Thời gian thử việc không quá 06 ngày làm việc đối với công việc khác (trình độ trung cấp/công nhân kỹ thuật là không quá 30 ngày)." },
+        { id: "c4_24", chapter: 4, num: 24, q: "Tiền lương của người lao động trong thời gian thử việc do hai bên thoả thuận nhưng ít nhất phải bằng:", opts: { A: "70% mức lương của công việc đó", B: "80% mức lương của công việc đó", C: "85% mức lương của công việc đó", D: "100% mức lương của công việc đó" }, ans: "C", exp: "Theo Điều 26 BLLĐ 2019: Tiền lương của người lao động trong thời gian thử việc do hai bên thỏa thuận nhưng ít nhất phải bằng 85% mức lương của công việc đó." },
+        { id: "c4_25", chapter: 4, num: 25, q: "Khi kết thúc thời gian thử việc, người sử dụng lao động phải thông báo gì cho người lao động?", opts: { A: "Công việc và điều kiện làm việc mới", B: "Kết quả thử việc", C: "Tiền lương của công việc mới", D: "Địa điểm, thời gian làm việc của công việc mới" }, ans: "B", exp: "Theo Khoản 1 Điều 27 BLLĐ 2019: Khi kết thúc thời gian thử việc, người sử dụng lao động phải thông báo kết quả thử việc cho người lao động." },
+        { id: "c4_26", chapter: 4, num: 26, q: "Nhận định nào sau đây là đúng?", opts: { A: "Chỉ được thử việc một lần đối với một công việc", B: "Có thể thử việc tối đa 02 lần đối với một công việc", C: "Có thể thử việc tối đa 03 lần đối với một công việc", D: "Không giới hạn số lần thử việc tối đa đối với một công việc" }, ans: "A", exp: "Theo Điều 25 BLLĐ 2019: Thời gian thử việc do hai bên thỏa thuận căn cứ vào tính chất và mức độ phức tạp của công việc nhưng chỉ được thử việc một lần đối với một công việc." },
+        { id: "c4_27", chapter: 4, num: 27, q: "Trường hợp thử việc không đạt yêu cầu thì:", opts: { A: "Người sử dụng lao động có thể cho người lao động thử việc lại", B: "Chấm dứt hợp đồng thử việc hoặc hợp đồng lao động", C: "Người sử dụng lao động có thể giao kết hợp đồng lao động với người lao động với mức lương thấp hơn", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Khoản 1 Điều 27 BLLĐ 2019: Trường hợp thử việc không đạt yêu cầu thì chấm dứt hợp đồng thử việc hoặc hợp đồng lao động đã giao kết." },
+        { id: "c4_28", chapter: 4, num: 28, q: "Người sử dụng lao động được chuyển người lao động làm công việc khác so với hợp đồng lao động trong trường hợp nào sau đây?", opts: { A: "Doanh nghiệp mở rộng quy mô", B: "Khắc phục tai nạn lao động", C: "Doanh nghiệp chuyển trụ sở làm việc", D: "Tất cả đều đúng" }, ans: "B", exp: "Theo Khoản 1 Điều 29 BLLĐ 2019: Khi gặp khó khăn đột xuất do thiên tai, hỏa hoạn, dịch bệnh nguy hiểm, áp dụng biện pháp ngăn ngừa, khắc phục tai nạn lao động, bệnh nghề nghiệp, sự cố điện, nước hoặc do nhu cầu sản xuất, kinh doanh thì NSDLĐ được quyền tạm thời chuyển NLĐ làm công việc khác so với HĐLĐ." },
+        { id: "c4_29", chapter: 4, num: 29, q: "Khi tạm thời chuyển người lao động làm công việc khác so với hợp đồng lao động, người sử dụng lao động phải báo cho người lao động biết trước ít nhất bao nhiêu ngày?", opts: { A: "Không cần báo trước", B: "03 ngày làm việc", C: "05 ngày làm việc", D: "07 ngày làm việc" }, ans: "B", exp: "Theo Khoản 2 Điều 29 BLLĐ 2019: Khi tạm thời chuyển NLĐ làm công việc khác so với HĐLĐ, NSDLĐ phải báo cho NLĐ biết trước ít nhất 03 ngày làm việc." },
+        { id: "c4_30", chapter: 4, num: 30, q: "Người sử dụng lao động được quyền tạm thời chuyển người lao động làm công việc khác so với hợp đồng lao động nhưng không được quá:", opts: { A: "30 ngày cộng dồn trong một năm", B: "60 ngày làm việc cộng dồn trong một năm", C: "60 ngày làm việc liên tục", D: "30 ngày làm việc liên tục" }, ans: "B", exp: "Theo Khoản 1 Điều 29 BLLĐ 2019: Thời hạn tạm thời chuyển NLĐ làm công việc khác không được quá 60 ngày làm việc cộng dồn trong 01 năm; trường hợp chuyển quá 60 ngày làm việc cộng dồn trong 01 năm thì chỉ được thực hiện khi NLĐ đồng ý bằng văn bản." },
+        { id: "c4_31", chapter: 4, num: 31, q: "Nếu người lao động không đồng ý tạm thời làm công việc khác so với hợp đồng lao động quá 60 ngày làm việc cộng dồn trong 01 năm mà phải ngừng việc thì người lao động được hưởng:", opts: { A: "Lương ngừng việc theo quy định tại Điều 99 BLLĐ", B: "Trợ cấp mất việc làm", C: "Trợ cấp thôi việc", D: "Tất cả đều đúng" }, ans: "A", exp: "Theo Khoản 4 Điều 29 BLLĐ 2019: Nếu NLĐ không đồng ý tạm thời làm công việc khác quá 60 ngày làm việc cộng dồn trong 01 năm mà phải ngừng việc thì NSDLĐ phải trả lương ngừng việc theo quy định tại Điều 99 của Bộ luật này." },
+        { id: "c4_32", chapter: 4, num: 32, q: "Trường hợp nào sau đây người lao động được tạm hoãn thực hiện hợp đồng lao động?", opts: { A: "Tham gia nghĩa vụ quân sự", B: "Bị kết án phạt tù nhưng không được hưởng án treo", C: "Bị Tòa án tuyên bố mất năng lực hành vi dân sự", D: "Được điều chuyển công tác" }, ans: "A", exp: "Theo Điểm a Khoản 1 Điều 30 BLLĐ 2019: Người lao động thực hiện nghĩa vụ quân sự, nghĩa vụ tham gia Dân quân tự vệ được tạm hoãn thực hiện HĐLĐ. (Trường hợp B và C là chấm dứt HĐLĐ theo Điều 34)." },
+        { id: "c4_33", chapter: 4, num: 33, q: "Người lao động bị tạm giữ hoặc tạm giam thì:", opts: { A: "Bị chấm dứt hợp đồng lao động", B: "Được tạm hoãn thực hiện hợp đồng lao động", C: "Bị giảm tiền lương", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Điểm b Khoản 1 Điều 30 BLLĐ 2019: Người lao động bị tạm giữ, tạm giam theo quy định của pháp luật về tố tụng hình sự thuộc trường hợp tạm hoãn thực hiện HĐLĐ." },
+        { id: "c4_34", chapter: 4, num: 34, q: "Trường hợp nào sau đây thì hợp đồng lao động chấm dứt?", opts: { A: "Người lao động thực hiện nghĩa vụ quân sự", B: "Giấy phép lao động của người lao động là người nước ngoài làm việc tại Việt Nam hết hiệu lực", C: "Người lao động nữ mang thai", D: "Người lao động bị tạm giữ, tạm giam" }, ans: "B", exp: "Theo Khoản 12 Điều 34 BLLĐ 2019: Giấy phép lao động hết hiệu lực đối với người lao động là người nước ngoài làm việc tại Việt Nam theo quy định tại Điều 156 của Bộ luật này là trường hợp chấm dứt HĐLĐ." },
+        { id: "c4_35", chapter: 4, num: 35, q: "Trong thời gian tạm hoãn hợp đồng lao động, người lao động:", opts: { A: "Vẫn được hưởng lương và quyền, lợi ích đã giao kết trong hợp đồng lao động", B: "Không được hưởng lương và quyền, lợi ích đã giao kết trong hợp đồng lao động, trừ trường hợp hai bên có thỏa thuận hoặc pháp luật có quy định khác", C: "Được hưởng lương ngừng việc theo quy định tại Điều 99 BLLĐ", D: "Được hưởng trợ cấp thôi việc" }, ans: "B", exp: "Theo Khoản 2 Điều 30 BLLĐ 2019: Trong thời gian tạm hoãn thực hiện hợp đồng lao động, người lao động không được hưởng lương và quyền, lợi ích đã giao kết trong hợp đồng lao động, trừ trường hợp hai bên có thỏa thuận hoặc pháp luật có quy định khác." },
+        { id: "c4_36", chapter: 4, num: 36, q: "Kể từ ngày hết thời hạn tạm hoãn thực hiện hợp đồng lao động, người lao động phải có mặt tại nơi làm việc trong thời hạn bao lâu?", opts: { A: "03 ngày", B: "7 ngày", C: "15 ngày", D: "30 ngày" }, ans: "C", exp: "Theo Điều 31 BLLĐ 2019: Trong thời hạn 15 ngày kể từ ngày hết thời hạn tạm hoãn thực hiện HĐLĐ, người lao động phải có mặt tại nơi làm việc và người sử dụng lao động phải nhận người lao động trở lại làm công việc theo HĐLĐ đã giao kết nếu HĐLĐ còn thời hạn." },
+        { id: "c4_37", chapter: 4, num: 37, q: "Nhận định nào sau đây là đúng?", opts: { A: "Người lao động chỉ được giao kết 01 hợp đồng với một người sử dụng lao động", B: "Người lao động được giao kết tối đa 02 hợp đồng với 02 người sử dụng lao động", C: "Người lao động được giao kết nhiều hợp đồng lao động với nhiều người sử dụng lao động nhưng phải bảo đảm thực hiện đầy đủ các nội dung đã giao kết", D: "Người lao động được giao kết tối đa 05 hợp đồng với 05 người sử dụng lao động" }, ans: "C", exp: "Theo Khoản 1 Điều 19 BLLĐ 2019: Người lao động có thể giao kết nhiều hợp đồng lao động với nhiều người sử dụng lao động nhưng phải bảo đảm thực hiện đầy đủ các nội dung đã giao kết." },
+        { id: "c4_38", chapter: 4, num: 38, q: "Người sử dụng lao động và người lao động sửa đổi, bổ sung hợp đồng lao động đã giao kết bằng cách?", opts: { A: "Ký kết phụ lục hợp đồng lao động hoặc giao kết hợp đồng lao động mới", B: "Chỉ ký kết phụ lục hợp đồng lao động", C: "Chỉ ký kết hợp đồng lao động mới", D: "Tiếp tục thực hiện hợp đồng lao động đã giao kết trước đó" }, ans: "A", exp: "Theo Khoản 2 Điều 33 BLLĐ 2019: Trường hợp hai bên thỏa thuận được thì việc sửa đổi, bổ sung nội dung hợp đồng lao động được tiến hành bằng việc ký kết phụ lục hợp đồng lao động hoặc giao kết hợp đồng lao động mới." },
+        { id: "c4_39", chapter: 4, num: 39, q: "Trường hợp nào sau đây, người sử dụng lao động được quyền đơn phương chấm dứt hợp đồng lao động mà không phải báo trước?", opts: { A: "Người lao động bị ốm đau, tai nạn đã điều trị trong thời gian dài", B: "Người lao động tự ý bỏ việc mà không có lý do chính đáng từ 04 ngày làm việc liên tục trở lên", C: "Người lao động tự ý bỏ việc mà không có lý do chính đáng từ 05 ngày làm việc liên tục trở lên", D: "Người lao động cung cấp không trung thực thông tin theo quy định tại khoản 2 Điều 16 của Bộ luật Lao động năm 2019 khi giao kết hợp đồng lao động làm ảnh hưởng đến việc tuyển dụng người lao động" }, ans: "C", exp: "Theo Khoản 3 Điều 36 BLLĐ 2019: Khi đơn phương chấm dứt HĐLĐ trong trường hợp NLĐ không có mặt tại nơi làm việc sau thời hạn tạm hoãn (Điều 31) hoặc NLĐ tự ý bỏ việc mà không có lý do chính đáng từ 05 ngày làm việc liên tục trở lên (điểm e khoản 1 Điều 36) thì NSDLĐ không phải báo trước." },
+        { id: "c4_40", chapter: 4, num: 40, q: "Đối với hợp đồng lao động xác định thời hạn từ 12 tháng đến 36 tháng, người lao động có quyền đơn phương chấm dứt hợp đồng lao động nhưng phải báo trước cho người sử dụng lao động ít nhất:", opts: { A: "Theo quy định của Chính phủ", B: "30 ngày", C: "45 ngày", D: "03 ngày làm việc" }, ans: "B", exp: "Theo Điểm b Khoản 1 Điều 35 BLLĐ 2019: Báo trước ít nhất 30 ngày nếu làm việc theo hợp đồng lao động xác định thời hạn có thời hạn từ 12 tháng đến 36 tháng." },
+        { id: "c4_41", chapter: 4, num: 41, q: "Đối với hợp đồng lao động không xác định thời hạn, người lao động có quyền đơn phương chấm dứt hợp đồng lao động nhưng phải báo trước cho người sử dụng lao động ít nhất:", opts: { A: "Theo quy định của Chính phủ", B: "30 ngày", C: "45 ngày", D: "03 ngày làm việc" }, ans: "C", exp: "Theo Điểm a Khoản 1 Điều 35 BLLĐ 2019: Báo trước ít nhất 45 ngày nếu làm việc theo hợp đồng lao động không xác định thời hạn." },
+        { id: "c4_42", chapter: 4, num: 42, q: "Trường hợp nào sau đây, người sử dụng lao động không được thực hiện quyền đơn phương chấm dứt hợp đồng lao động?", opts: { A: "Người lao động nữ mang thai, người lao động đang nghỉ thai sản hoặc nuôi con dưới 12 tháng tuổi", B: "Người lao động đang nghỉ hằng năm, nghỉ việc riêng và trường hợp nghỉ khác được người sử dụng lao động đồng ý.", C: "Người lao động ốm đau hoặc bị tai nạn, bệnh nghề nghiệp đang điều trị, điều dưỡng theo chỉ định của cơ sở khám bệnh, chữa bệnh có thẩm quyền, trừ trường hợp quy định tại điểm b khoản 1 Điều 36 của Bộ luật Lao động năm 2019", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Điều 37 BLLĐ 2019, tất cả 3 trường hợp trên đều là những trường hợp người sử dụng lao động không được thực hiện quyền đơn phương chấm dứt HĐLĐ." },
+        { id: "c4_43", chapter: 4, num: 43, q: "Trường hợp nào sau đây người lao động được quyền đơn phương chấm dứt hợp đồng lao động mà không cần báo trước?", opts: { A: "Bị người sử dụng lao động ngược đãi, đánh đập hoặc có lời nói, hành vi nhục mạ, hành vi làm ảnh hưởng đến sức khỏe, nhân phẩm, danh dự", B: "Không được trả đủ lương hoặc trả lương không đúng thời hạn, trừ trường hợp quy định tại khoản 4 Điều 97 của Bộ luật Lao động năm 2019", C: "Lao động nữ mang thai phải nghỉ việc theo quy định tại khoản 1 Điều 138 của Bộ luật Lao động năm 2019", D: "Tất cả các đáp án trên" }, ans: "D", exp: "Theo Khoản 2 Điều 35 BLLĐ 2019, tất cả các trường hợp trên người lao động đều có quyền đơn phương chấm dứt HĐLĐ ngay mà không cần báo trước." },
+        { id: "c4_44", chapter: 4, num: 44, q: "Khi người lao động đơn phương chấm dứt hợp đồng lao động trái pháp luật thì:", opts: { A: "Người lao động không được trợ cấp thôi việc", B: "Phải hoàn trả cho người sử dụng lao động chi phí đào tạo (nếu có).", C: "Phải bồi thường cho người sử dụng lao động 1/2 tháng tiền lương theo hợp đồng lao động và một khoản tiền tương ứng với tiền lương theo hợp đồng lao động trong những ngày không báo trước", D: "Tất cả các đáp án đều đúng" }, ans: "D", exp: "Theo Điều 40 BLLĐ 2019, NLĐ đơn phương chấm dứt HĐLĐ trái pháp luật sẽ phải chịu đầy đủ 3 nghĩa vụ/hậu quả pháp lý nêu trên." },
+        { id: "c4_45", chapter: 4, num: 45, q: "Người lao động đơn phương chấm dứt hợp đồng trái pháp luật phải bồi thường cho người sử dụng lao động:", opts: { A: "Một tháng tiền lương", B: "Nửa tháng tiền lương và tiền lương trong những ngày không báo trước", C: "Nửa tháng tiền lương", D: "Không phải bồi thường" }, ans: "B", exp: "Theo Khoản 2 Điều 40 BLLĐ 2019: Phải bồi thường cho người sử dụng lao động nửa tháng tiền lương theo hợp đồng lao động và một khoản tiền tương ứng với tiền lương theo hợp đồng lao động trong những ngày không báo trước." },
+        { id: "c4_46", chapter: 4, num: 46, q: "Người lao động làm việc thường xuyên cho người sử dụng lao động trong thời gian bao lâu thì được hưởng trợ cấp thôi việc?", opts: { A: "Từ đủ 6 tháng trở lên", B: "Từ đủ 12 tháng trở lên", C: "Từ đủ 24 tháng trở lên", D: "Từ đủ 36 tháng trở lên" }, ans: "B", exp: "Theo Khoản 1 Điều 46 BLLĐ 2019: Khi HĐLĐ chấm dứt đúng quy định thì người sử dụng lao động có trách nhiệm trả trợ cấp thôi việc cho người lao động đã làm việc thường xuyên cho mình từ đủ 12 tháng trở lên." },
+        { id: "c4_47", chapter: 4, num: 47, q: "Người lao động làm việc thường xuyên từ đủ 12 tháng trở lên cho người sử dụng lao động được hưởng mức trợ cấp thôi việc là bao nhiêu?", opts: { A: "Mỗi năm làm việc được trợ cấp 1/2 tháng tiền lương", B: "Mỗi năm làm việc được trợ cấp 01 tháng tiền lương", C: "Mỗi năm làm việc được trợ cấp 03 tháng tiền lương", D: "Không được hưởng trợ cấp thôi việc" }, ans: "A", exp: "Theo Khoản 1 Điều 46 BLLĐ 2019: Mỗi năm làm việc được trợ cấp một nửa tháng tiền lương." },
+        { id: "c4_48", chapter: 4, num: 48, q: "Tiền lương để tính trợ cấp mất việc làm là:", opts: { A: "Tiền lương bình quân của tổng thời gian người lao động làm việc cho người sử dụng lao động", B: "Tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc.", C: "Tiền lương bình quân của 12 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc.", D: "Tiền lương bình quân của 36 tháng liền kề theo hợp đồng lao động trước khi người lao động thôi việc." }, ans: "B", exp: "Theo Khoản 3 Điều 47 BLLĐ 2019: Tiền lương để tính trợ cấp mất việc làm là tiền lương bình quân của 06 tháng liền kề theo hợp đồng lao động trước khi người lao động mất việc làm." },
+        { id: "c4_49", chapter: 4, num: 49, q: "Trường hợp người sử dụng lao động đơn phương chấm dứt hợp đồng lao động trái pháp luật đã nhận người lao động trở lại làm việc thì:", opts: { A: "Người lao động phải tiếp tục làm việc đủ 01 năm cho người lao động nữa mới đủ điều kiện nhận trợ cấp thôi việc", B: "Người lao động hoàn trả cho người sử dụng lao động các khoản tiền trợ cấp thôi việc, trợ cấp mất việc làm nếu đã nhận của người sử dụng lao động", C: "Người lao động không cần hoàn trả cho người sử dụng lao động các khoản tiền trợ cấp thôi việc, trợ cấp mất việc làm nếu đã nhận của người sử dụng lao động", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Khoản 1 Điều 41 BLLĐ 2019: Khi được nhận trở lại làm việc, người lao động hoàn trả cho người sử dụng lao động các khoản tiền trợ cấp thôi việc, trợ cấp mất việc làm nếu đã nhận của người sử dụng lao động." },
+        { id: "c4_50", chapter: 4, num: 50, q: "Tiền lương của người lao động bao gồm:", opts: { A: "Mức lương theo công việc hoặc chức danh và tiền thưởng", B: "Mức lương theo công việc hoặc chức danh, phụ cấp lương và các khoản bổ sung khác", C: "Mức lương theo công việc hoặc chức danh, phụ cấp lương, các khoản bổ sung khác và tiền thưởng", D: "Mức lương theo công việc hoặc chức danh" }, ans: "B", exp: "Theo Khoản 1 Điều 90 BLLĐ 2019: Tiền lương là số tiền mà người sử dụng lao động trả cho người lao động theo thỏa thuận để thực hiện công việc, bao gồm mức lương theo công việc hoặc chức danh, phụ cấp lương và các khoản bổ sung khác." },
+        { id: "c4_51", chapter: 4, num: 51, q: "Mức lương theo công việc hoặc chức danh của người lao động không được thấp hơn:", opts: { A: "Mức lương cơ sở", B: "Mức lương tối thiểu", C: "Tất cả đều đúng", D: "Tất cả đều sai" }, ans: "B", exp: "Theo Khoản 2 Điều 90 BLLĐ 2019: Mức lương theo công việc hoặc chức danh không được thấp hơn mức lương tối thiểu." },
+        { id: "c4_52", chapter: 4, num: 52, q: "Nếu do sự cố không phải lỗi của người sử dụng lao động mà người lao động phải ngừng việc thì hai bên thỏa thuận về tiền lương ngừng việc nhưng không được thấp hơn mức lương tối thiểu trong:", opts: { A: "07 ngày đầu tiên", B: "14 ngày đầu tiên", C: "15 ngày đầu tiên", D: "30 ngày đầu tiên" }, ans: "B", exp: "Theo Khoản 3 Điều 99 BLLĐ 2019: Nếu vì sự cố về điện, nước hoặc lý do khách quan khác không do lỗi của NSDLĐ thì tiền lương ngừng việc do hai bên thỏa thuận nhưng không được thấp hơn mức lương tối thiểu trong 14 ngày đầu tiên." },
+        { id: "c4_53", chapter: 4, num: 53, q: "Người lao động làm thêm giờ vào thời điểm nào thì được trả ít nhất bằng 200% tính theo đơn giá tiền lương hoặc tiền lương thực trả theo công việc đang làm?", opts: { A: "Ngày nghỉ hàng tuần", B: "Ngày thường", C: "Ngày nghỉ lễ, tết", D: "Ngày nghỉ có hưởng lương" }, ans: "A", exp: "Theo Điểm b Khoản 1 Điều 98 BLLĐ 2019: Vào ngày nghỉ hằng tuần, làm thêm giờ được trả ít nhất bằng 200% (ngày thường là 150%, ngày lễ tết là 300%)." },
+        { id: "c4_54", chapter: 4, num: 54, q: "Người lao động làm thêm giờ vào ngày nghỉ lễ, tết, ngày nghỉ có hưởng lương thì được trả lương tính theo đơn giá tiền lương hoặc tiền lương thực trả theo công việc đang làm như sau:", opts: { A: "Ít nhất bằng 150%", B: "Ít nhất bằng 200%", C: "Ít nhất bằng 250%", D: "Ít nhất bằng 300% chưa kể tiền lương ngày lễ, tết, ngày nghỉ có hưởng lương đối với người lao động hưởng lương ngày" }, ans: "D", exp: "Theo Điểm c Khoản 1 Điều 98 BLLĐ 2019: Vào ngày nghỉ lễ, tết, ngày nghỉ có hưởng lương, làm thêm giờ được trả ít nhất bằng 300% chưa kể tiền lương ngày lễ, tết, ngày nghỉ có hưởng lương đối với người lao động hưởng lương ngày." },
+        { id: "c4_55", chapter: 4, num: 55, q: "Trường hợp phải ngừng việc do lỗi của người sử dụng lao động thì người lao động:", opts: { A: "Không được trả lương", B: "Được trả đủ tiền lương theo hợp đồng lao động", C: "Được trả 50% tiền lương theo hợp đồng lao động", D: "Được trả tiền lương bằng mức lương tối thiểu do Nhà nước quy định" }, ans: "B", exp: "Theo Khoản 1 Điều 99 BLLĐ 2019: Nếu do lỗi của người sử dụng lao động thì người lao động được trả đủ tiền lương theo hợp đồng lao động." },
+        { id: "c4_56", chapter: 4, num: 56, q: "Thời giờ làm việc bình thường tối đa là bao nhiêu giờ trong 01 tuần?", opts: { A: "40 giờ", B: "48 giờ", C: "56 giờ", D: "Tùy theo thỏa thuận của người lao động và người sử dụng lao động" }, ans: "B", exp: "Theo Khoản 1 Điều 105 BLLĐ 2019: Thời giờ làm việc bình thường không quá 08 giờ trong 01 ngày và không quá 48 giờ trong 01 tuần." },
+        { id: "c4_57", chapter: 4, num: 57, q: "Thời gian làm việc ban đêm được quy định bắt đầu từ mấy giờ?", opts: { A: "21 giờ", B: "21 giờ 30 phút", C: "22 giờ", D: "22 giờ 30 phút" }, ans: "C", exp: "Theo Điều 106 BLLĐ 2019: Giờ làm việc ban đêm được tính từ 22 giờ đến 06 giờ sáng ngày hôm sau." },
+        { id: "c4_58", chapter: 4, num: 58, q: "Đối với một số ngành, nghề, công việc đặc biệt, thời gian làm thêm giờ?", opts: { A: "Không quá 200 giờ/năm", B: "Không quá 250 giờ/năm", C: "Không quá 300 giờ/năm", D: "Không quá 350 giờ/năm" }, ans: "C", exp: "Theo Khoản 3 Điều 107 BLLĐ 2019: Người sử dụng lao động được sử dụng người lao động làm thêm không quá 300 giờ trong 01 năm trong một số ngành, nghề, công việc hoặc trường hợp đặc biệt." },
+        { id: "c4_59", chapter: 4, num: 59, q: "Trong trường hợp nào sau đây, người sử dụng lao động có quyền yêu cầu người lao động làm thêm giờ vào bất kỳ ngày nào mà không bị giới hạn về số giờ làm thêm và người lao động không được từ chối?", opts: { A: "Khi có dịch bệnh nguy hiểm, thảm họa", B: "Thực hiện lệnh động viên, huy động bảo đảm nhiệm vụ quốc phòng, an ninh theo quy định của pháp luật", C: "Khi xảy ra thiên tai, hỏa hoạn", D: "Tất cả các trường hợp trên" }, ans: "D", exp: "Theo Điều 108 BLLĐ 2019: NSDLĐ có quyền yêu cầu NLĐ làm thêm giờ vào bất kỳ ngày nào không bị giới hạn số giờ và NLĐ không được từ chối trong trường hợp thực hiện lệnh động viên quốc phòng an ninh hoặc phòng chống, khắc phục hậu quả thiên tai, hỏa hoạn, dịch bệnh nguy hiểm, thảm họa." },
+        { id: "c4_60", chapter: 4, num: 60, q: "Thời gian làm thêm giờ tối đa mỗi tháng là bao nhiêu giờ?", opts: { A: "Tùy theo thỏa thuận giữa người lao động và người sử dụng lao động", B: "40 giờ", C: "48 giờ", D: "56 giờ" }, ans: "B", exp: "Theo Điểm b Khoản 2 Điều 107 BLLĐ 2019: Bảo đảm số giờ làm thêm của người lao động không quá 40 giờ trong 01 tháng." },
+        { id: "c4_61", chapter: 4, num: 61, q: "Thời gian làm thêm tối đa của người lao động trong ngày không vượt quá bao nhiêu phần trăm so với số giờ làm việc bình thường?", opts: { A: "50%", B: "100%", C: "200%", D: "150%" }, ans: "A", exp: "Theo Điểm b Khoản 2 Điều 107 BLLĐ 2019: Số giờ làm thêm của người lao động không quá 50% số giờ làm việc bình thường trong 01 ngày." },
+        { id: "c4_62", chapter: 4, num: 62, q: "Đối với ngành, nghề, công việc bình thường, thời gian làm thêm giờ?", opts: { A: "Không quá 200 giờ/năm", B: "Không quá 250 giờ/năm", C: "Không quá 300 giờ/năm", D: "Không quá 350 giờ/năm" }, ans: "A", exp: "Theo Điểm c Khoản 2 Điều 107 BLLĐ 2019: Không quá 200 giờ trong 01 năm (trừ các trường hợp đặc biệt được làm tới 300 giờ/năm)." },
+        { id: "c4_63", chapter: 4, num: 63, q: "Người lao động làm việc ban đêm thì được nghỉ giữa giờ:", opts: { A: "ít nhất 15 phút liên tục", B: "ít nhất 30 phút liên tục", C: "ít nhất 45 phút liên tục", D: "ít nhất 60 phút liên tục" }, ans: "C", exp: "Theo Khoản 1 Điều 109 BLLĐ 2019: Người lao động làm việc theo thời giờ làm việc quy định từ 06 giờ trở lên trong một ngày thì được nghỉ giữa giờ ít nhất 30 phút liên tục, làm việc ban đêm thì được nghỉ giữa giờ ít nhất 45 phút liên tục." },
+        { id: "c4_64", chapter: 4, num: 64, q: "Người lao động làm việc theo ca liên tục từ 6 giờ trở lên thì thời gian nghỉ giữa giờ:", opts: { A: "Được tính vào giờ làm việc", B: "Không được tính vào giờ làm việc", C: "Phải bị chia nhỏ", D: "Tất cả đều sai" }, ans: "A", exp: "Theo Khoản 1 Điều 109 BLLĐ 2019: Trường hợp người lao động làm việc theo ca liên tục từ 06 giờ trở lên thì thời gian nghỉ giữa giờ được tính vào giờ làm việc." },
+        { id: "c4_65", chapter: 4, num: 65, q: "Theo Bộ luật lao động hiện hành, người lao động được nghỉ bao nhiêu ngày trong dịp Tết Âm lịch?", opts: { A: "03 ngày", B: "05 ngày", C: "07 ngày", D: "10 ngày" }, ans: "B", exp: "Theo Điểm b Khoản 1 Điều 112 BLLĐ 2019: Tết Âm lịch được nghỉ 05 ngày (hưởng nguyên lương)." },
+        { id: "c4_66", chapter: 4, num: 66, q: "Theo Bộ luật lao động hiện hành, người lao động được nghỉ bao nhiêu ngày vào dịp Quốc khánh?", opts: { A: "Nghỉ 01 ngày (02/9 dương lịch)", B: "Nghỉ 02 ngày (02/9 dương lịch và 01 ngày liền kế trước đó)", C: "Nghỉ 02 ngày (02/9 dương lịch và 01 ngày liền kế sau đó)", D: "Nghỉ 02 ngày (02/9 dương lịch và 01 ngày liền kế trước hoặc sau đó)" }, ans: "D", exp: "Theo Điểm đ Khoản 1 Điều 112 BLLĐ 2019: Quốc khánh nghỉ 02 ngày (ngày 02 tháng 9 dương lịch và 01 ngày liền kề trước hoặc sau)." },
+        { id: "c4_67", chapter: 4, num: 67, q: "Theo quy định hiện hành thì trong một năm người lao động Việt Nam được nghỉ bao nhiêu ngày lễ, tết?", opts: { A: "Bảy ngày", B: "Mười ngày", C: "Mười một ngày", D: "Mười hai ngày" }, ans: "C", exp: "Theo Khoản 1 Điều 112 BLLĐ 2019, tổng số ngày nghỉ lễ, tết hưởng nguyên lương trong năm là 11 ngày (Tết Dương lịch 1, Tết Âm lịch 5, Giỗ Tổ Hùng Vương 1, 30/4 1, 1/5 1, Quốc khánh 2)." },
+        { id: "c4_68", chapter: 4, num: 68, q: "So với người lao động Việt Nam, người lao động là người nước ngoài làm việc tại Việt Nam thì được nghỉ thêm bao nhiêu ngày?", opts: { A: "01 ngày Tết cổ truyền dân tộc, 01 ngày Quốc khánh của nước họ", B: "01 ngày Tết cổ truyền dân tộc", C: "01 ngày Quốc khánh của nước họ", D: "Không được nghỉ thêm ngày nào" }, ans: "A", exp: "Theo Khoản 2 Điều 112 BLLĐ 2019: Lao động là người nước ngoài làm việc tại Việt Nam ngoài các ngày nghỉ theo quy định tại khoản 1 Điều này còn được nghỉ thêm 01 ngày Tết cổ truyền dân tộc và 01 ngày Quốc khánh của nước họ." },
+        { id: "c4_69", chapter: 4, num: 69, q: "Theo Bộ luật lao động hiện hành, người lao động Việt Nam làm việc đủ 12 tháng trong điều kiện bình thường được nghỉ hằng năm bao nhiêu ngày?", opts: { A: "Không được nghỉ", B: "12 ngày", C: "14 ngày", D: "16 ngày" }, ans: "B", exp: "Theo Điểm a Khoản 1 Điều 113 BLLĐ 2019: 12 ngày làm việc đối với người làm công việc trong điều kiện bình thường." },
+        { id: "c4_70", chapter: 4, num: 70, q: "Người lao động làm công việc nặng nhọc, độc hại, nguy hiểm được nghỉ hằng năm bao nhiêu ngày?", opts: { A: "12 ngày", B: "14 ngày", C: "16 ngày", D: "30 ngày" }, ans: "B", exp: "Theo Điểm b Khoản 1 Điều 113 BLLĐ 2019: 14 ngày làm việc đối với người lao động chưa thành niên, lao động là người khuyết tật, người làm nghề, công việc nặng nhọc, độc hại, nguy hiểm." },
+        { id: "c4_71", chapter: 4, num: 71, q: "Người lao động làm công việc đặc biệt nặng nhọc, độc hại, nguy hiểm được nghỉ hằng năm bao nhiêu ngày?", opts: { A: "12 ngày", B: "14 ngày", C: "16 ngày", D: "30 ngày" }, ans: "C", exp: "Theo Điểm c Khoản 1 Điều 113 BLLĐ 2019: 16 ngày làm việc đối với người làm nghề, công việc đặc biệt nặng nhọc, độc hại, nguy hiểm." },
+        { id: "c4_72", chapter: 4, num: 72, q: "Theo Bộ luật lao động hiện hành, cứ đủ 05 năm làm việc cho một người sử dụng lao động thì số ngày nghỉ hằng năm của người lao động:", opts: { A: "Tăng thêm tương ứng 1/2 ngày", B: "Tăng thêm tương ứng 01 ngày", C: "Tăng thêm tương ứng 03 ngày", D: "Tăng thêm tương ứng 05 ngày" }, ans: "B", exp: "Theo Điều 114 BLLĐ 2019: Cứ đủ 05 năm làm việc cho một người sử dụng lao động thì số ngày nghỉ hằng năm của người lao động được tăng thêm tương ứng 01 ngày." },
+        { id: "c4_73", chapter: 4, num: 73, q: "Trường hợp người lao động kết hôn thì được nghỉ việc riêng, hưởng nguyên lương và phải báo trước cho người sử dụng lao động. Số ngày nghỉ việc riêng trong trường hợp này là:", opts: { A: "01 ngày", B: "03 ngày", C: "05 ngày", D: "07 ngày" }, ans: "B", exp: "Theo Điểm a Khoản 1 Điều 115 BLLĐ 2019: Kết hôn: nghỉ 03 ngày." },
+        { id: "c4_74", chapter: 4, num: 74, q: "Khi con đẻ của người lao động kết hôn thì người lao động được nghỉ việc riêng, hưởng nguyên lương trong bao nhiêu ngày?", opts: { A: "01 ngày", B: "02 ngày", C: "03 ngày", D: "Không được nghỉ" }, ans: "A", exp: "Theo Điểm b Khoản 1 Điều 115 BLLĐ 2019: Con đẻ, con nuôi kết hôn: nghỉ 01 ngày." },
+        { id: "c4_75", chapter: 4, num: 75, q: "Khi nghỉ hằng năm, nếu người lao động đi bằng các phương tiện đường bộ, đường sắt, đường thủy mà số ngày đi đường cả đi và về trên 02 ngày thì từ ngày thứ mấy trở đi được tính thêm thời gian đi đường ngoài ngày nghỉ hàng năm?", opts: { A: "Từ ngày thứ 02", B: "Từ ngày thứ 03", C: "Từ ngày thứ 05", D: "Không được tính thêm" }, ans: "B", exp: "Theo Khoản 6 Điều 113 BLLĐ 2019: Nếu số ngày đi đường cả đi và về trên 02 ngày thì từ ngày thứ 03 trở đi được tính thêm thời gian đi đường ngoài ngày nghỉ hằng năm và chỉ được tính cho 01 lần nghỉ trong năm." },
+        { id: "c4_76", chapter: 4, num: 76, q: "Khi nghỉ hàng năm, người lao động có thể thỏa thuận với người sử dụng lao động để nghỉ gộp tối đa bao nhiêu năm một lần?", opts: { A: "02 năm", B: "03 năm", C: "04 năm", D: "05 năm" }, ans: "B", exp: "Theo Khoản 4 Điều 113 BLLĐ 2019: Người lao động có thể thỏa thuận với người sử dụng lao động để nghỉ hằng năm thành nhiều lần hoặc nghỉ gộp tối đa 03 năm một lần." },
+        { id: "c4_77", chapter: 4, num: 77, q: "Trong trường hợp nào sau đây, người lao động được nghỉ việc riêng, hưởng nguyên lương?", opts: { A: "Anh, chị, em ruột của người lao động kết hôn", B: "Con nuôi của người lao động qua đời", C: "Cháu nội, cháu ngoại của người lao động kết hôn", D: "Cha, mẹ của người lao động kết hôn" }, ans: "B", exp: "Theo Điểm c Khoản 1 Điều 115 BLLĐ 2019: Cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi; cha đẻ, mẹ đẻ, cha nuôi, mẹ nuôi của vợ hoặc chồng; vợ hoặc chồng; con đẻ, con nuôi chết được nghỉ 03 ngày hưởng nguyên lương." },
+        { id: "c4_78", chapter: 4, num: 78, q: "Người sử dụng lao động không được phép:", opts: { A: "Xử lý kỷ luật lao động bằng cách kéo dài thời hạn nâng lương không quá 06 tháng", B: "Cắt lương thay việc xử lý kỷ luật lao động", C: "Khiển trách người lao động vi phạm kỷ luật lao động", D: "Cách chức người lao động vi phạm kỷ luật lao động" }, ans: "B", exp: "Theo Khoản 2 Điều 127 BLLĐ 2019: Nghiêm cấm hành vi phạt tiền, cắt lương thay việc xử lý kỷ luật lao động." },
+        { id: "c4_79", chapter: 4, num: 79, q: "Các hình thức xử lý kỷ luật lao động:", opts: { A: "Phạt tiền, cách chức", B: "Cảnh cáo, khiển trách, phạt tiền", C: "Khiển trách, cách chức, sa thải", D: "Khiển trách, kéo dài thời hạn nâng lương không quá 06 tháng, cách chức, sa thải" }, ans: "D", exp: "Theo Điều 124 BLLĐ 2019, có 04 hình thức xử lý kỷ luật lao động: (1) Khiển trách; (2) Kéo dài thời hạn nâng lương không quá 06 tháng; (3) Cách chức; (4) Sa thải." },
+        { id: "c4_80", chapter: 4, num: 80, q: "Người sử dụng lao động không được xử lý kỷ luật người lao động đang trong thời gian nào sau đây?", opts: { A: "Người lao động nghỉ ốm đau, điều dưỡng; nghỉ việc được sự đồng ý của người sử dụng lao động", B: "Người lao động đang bị tạm giữ, tạm giam", C: "Người lao động nữ mang thai; người lao động nghỉ thai sản, nuôi con dưới 12 tháng tuổi", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Khoản 4 Điều 122 BLLĐ 2019, tất cả 3 trường hợp trên đều là thời gian không được xử lý kỷ luật lao động." },
+        { id: "c4_81", chapter: 4, num: 81, q: "Hành vi nào sau đây bị nghiêm cấm khi xử lý kỷ luật lao động?", opts: { A: "Xâm phạm sức khỏe, danh dự, tính mạng, uy tín, nhân phẩm của người lao động", B: "Phạt tiền, cắt lương thay việc xử lý kỷ luật lao động", C: "Xử lý kỷ luật lao động đối với người lao động có hành vi vi phạm không được quy định trong nội quy lao động hoặc không thỏa thuận trong hợp đồng lao động đã giao kết hoặc pháp luật về lao động không có quy định", D: "Tất cả đều đúng" }, ans: "D", exp: "Theo Điều 127 BLLĐ 2019, cả 3 hành vi trên đều bị nghiêm cấm tuyệt đối khi xử lý kỷ luật lao động." },
+        { id: "c4_82", chapter: 4, num: 82, q: "Cơ quan, tổ chức, cá nhân nào sau đây có thẩm quyền giải quyết tranh chấp lao động cá nhân?", opts: { A: "Hòa giải viên lao động; Hội đồng trọng tài lao động", B: "Chỉ có Hội đồng trọng tài lao động", C: "Hòa giải viên lao động; Hội đồng trọng tài lao động; Tòa án nhân dân.", D: "Chỉ có Toà án nhân dân" }, ans: "C", exp: "Theo Điều 187 BLLĐ 2019: Cơ quan, tổ chức, cá nhân có thẩm quyền giải quyết tranh chấp lao động cá nhân bao gồm: Hòa giải viên lao động; Hội đồng trọng tài lao động; Tòa án nhân dân." },
+        { id: "c4_83", chapter: 4, num: 83, q: "Các tổ chức, cá nhân nào sau đây có thẩm quyền giải quyết tranh chấp lao động tập thể về lợi ích?", opts: { A: "Hòa giải viên lao động, Hội đồng trọng tài lao động, Tòa án nhân dân", B: "Hòa giải viên lao động, Tòa án nhân dân", C: "Tòa án nhân dân, Hội đồng trọng tài lao động", D: "Hòa giải viên lao động và Hội đồng trọng tài lao động" }, ans: "D", exp: "Theo Điều 195 BLLĐ 2019: Tranh chấp lao động tập thể về lợi ích chỉ do Hòa giải viên lao động và Hội đồng trọng tài lao động giải quyết (Tòa án không giải quyết tranh chấp về lợi ích)." },
+        { id: "c4_84", chapter: 4, num: 84, q: "Các cơ quan, tổ chức, cá nhân nào có thẩm quyền giải quyết tranh chấp lao động tập thể về quyền?", opts: { A: "Hòa giải viên lao động, Hội đồng trọng tài lao động, Tòa án nhân dân", B: "Hòa giải viên lao động, Tòa án nhân dân", C: "Tòa án nhân dân, Hội đồng trọng tài lao động", D: "Hòa giải viên lao động và Hội đồng trọng tài lao động" }, ans: "A", exp: "Theo Điều 191 BLLĐ 2019: Tranh chấp lao động tập thể về quyền do Hòa giải viên lao động, Hội đồng trọng tài lao động và Tòa án nhân dân giải quyết." },
+        { id: "c4_85", chapter: 4, num: 85, q: "Trường hợp nào sau đây người lao động có quyền đình công?", opts: { A: "Hòa giải không thành hoặc hết thời hạn hòa giải quy định tại khoản 2 Điều 188 của BLLĐ mà hòa giải viên lao động không tiến hành hòa giải", B: "Khi tranh chấp lao động tập thể đang được cơ quan, tổ chức, cá nhân có thẩm quyền giải quyết theo quy định của BLLĐ", C: "Khi phát sinh tranh chấp lao động cá nhân giữa người lao động và người sử dụng lao động", D: "Tất cả đều đúng" }, ans: "A", exp: "Theo Điều 199 BLLĐ 2019: Người lao động có quyền đình công khi giải quyết tranh chấp lao động tập thể về lợi ích mà hòa giải không thành hoặc hết thời hạn hòa giải mà hòa giải viên không tiến hành hòa giải (hoặc Ban trọng tài không thành lập/không ra quyết định/NSDLĐ không thi hành)." }
+    ];
+
+    // =========================================================================
+    // 2. TRẠNG THÁI ỨNG DỤNG & LOCALSTORAGE
+    // =========================================================================
+    const STORAGE_KEY_STUDY = "pldc_study_progress_v1";
+    const STORAGE_KEY_LAST_EXAM = "pldc_last_random_ids_v1";
+
+    let studyProgress = JSON.parse(localStorage.getItem(STORAGE_KEY_STUDY) || "{}");
+    let currentStudyChapter = 1;
+    let studyViewMode = "list"; // 'list' | 'single'
+    let studyFilter = "all"; // 'all' | 'unanswered' | 'correct' | 'wrong'
+    let studySearchQuery = "";
+    let singleCardIndex = 0;
+
+    // Exam State
+    let examState = {
+        active: false,
+        mode: "random", // 'chapter' | 'random'
+        chapterId: null,
+        title: "",
+        durationSeconds: 1800,
+        remainingSeconds: 1800,
+        timerInterval: null,
+        questions: [], // Array of prepared question objects
+        userAnswers: {}, // { index: 'A' }
+        submitted: false,
+        reviewFilter: "all"
+    };
+
+    // =========================================================================
+    // 3. ĐIỀU HƯỚNG TAB CHÍNH & MODAL
+    // =========================================================================
+    function switchMainTab(tab) {
+        if (examState.active && !examState.submitted && tab === "study") {
+            openCustomModal(
+                "Đang trong thời gian thi thử",
+                "Bạn đang làm bài thi tính giờ. Nếu rời khỏi phòng thi, bài làm hiện tại sẽ bị hủy. Bạn có muốn thoát phòng thi không?",
+                () => {
+                    clearInterval(examState.timerInterval);
+                    examState.active = false;
+                    backToExamSetup();
+                    activateTabUI(tab);
+                }
+            );
+            return;
+        }
+        activateTabUI(tab);
+    }
+
+    function activateTabUI(tab) {
+        const navStudy = document.getElementById("nav-study");
+        const navExam = document.getElementById("nav-exam");
+        const secStudy = document.getElementById("section-study");
+        const secExam = document.getElementById("section-exam");
+
+        if (tab === "study") {
+            navStudy.className = "flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow";
+            navExam.className = "flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white";
+            secStudy.classList.remove("hidden");
+            secExam.classList.add("hidden");
+            renderStudyDashboard();
+        } else {
+            navExam.className = "flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all bg-blue-600 text-white shadow";
+            navStudy.className = "flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 rounded-lg text-sm font-semibold transition-all text-slate-300 hover:text-white";
+            secExam.classList.remove("hidden");
+            secStudy.classList.add("hidden");
+        }
+    }
+
+    let modalConfirmCallback = null;
+    function openCustomModal(title, body, onConfirm, showCancel = true) {
+        document.getElementById("modal-title").innerText = title;
+        document.getElementById("modal-body").innerText = body;
+        modalConfirmCallback = onConfirm;
+        const cancelBtn = document.getElementById("modal-cancel-btn");
+        cancelBtn.style.display = showCancel ? "inline-block" : "none";
+        document.getElementById("custom-modal").classList.remove("hidden");
+    }
+
+    function closeCustomModal() {
+        document.getElementById("custom-modal").classList.add("hidden");
+        modalConfirmCallback = null;
+    }
+
+    document.getElementById("modal-confirm-btn").addEventListener("click", () => {
+        if (modalConfirmCallback) modalConfirmCallback();
+        closeCustomModal();
+    });
+
+    // =========================================================================
+    // 4. LOGIC PHÂN HỆ ÔN TẬP (THEO CHƯƠNG)
+    // =========================================================================
+    function saveStudyProgress() {
+        localStorage.setItem(STORAGE_KEY_STUDY, JSON.stringify(studyProgress));
+    }
+
+    function selectStudyChapter(chapId) {
+        currentStudyChapter = chapId;
+        singleCardIndex = 0;
+        renderStudyDashboard();
+    }
+
+    function setStudyViewMode(mode) {
+        studyViewMode = mode;
+        singleCardIndex = 0;
+        const btnList = document.getElementById("btn-view-list");
+        const btnSingle = document.getElementById("btn-view-single");
+        if (mode === "list") {
+            btnList.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition";
+            btnSingle.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+        } else {
+            btnSingle.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-white text-blue-700 shadow-sm transition";
+            btnList.className = "px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:text-slate-900 transition";
+        }
+        renderStudyQuestions();
+    }
+
+    function setStudyFilter(filter) {
+        studyFilter = filter;
+        singleCardIndex = 0;
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            if (btn.dataset.filter === filter) {
+                btn.className = "filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-800 text-white transition";
+            } else {
+                btn.className = "filter-btn px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition";
+            }
+        });
+        renderStudyQuestions();
+    }
+
+    function handleStudySearch(val) {
+        studySearchQuery = val.trim().toLowerCase();
+        singleCardIndex = 0;
+        renderStudyQuestions();
+    }
+
+    function confirmResetChapter() {
+        const meta = CHAPTER_META[currentStudyChapter];
+        openCustomModal(
+            `Làm lại ${meta.short}`,
+            `Toàn bộ lịch sử chọn đáp án của ${meta.title} sẽ được đặt lại về trạng thái chưa làm. Bạn có chắc chắn muốn tiếp tục?`,
+            () => {
+                QUESTION_BANK.filter(q => q.chapter === currentStudyChapter).forEach(q => {
+                    delete studyProgress[q.id];
+                });
+                saveStudyProgress();
+                singleCardIndex = 0;
+                renderStudyDashboard();
+            }
+        );
+    }
+
+    function renderStudyDashboard() {
+        // 1. Render 4 Chapter Cards
+        const cardsContainer = document.getElementById("study-chapter-cards");
+        let cardsHtml = "";
+        for (let c = 1; c <= 4; c++) {
+            const meta = CHAPTER_META[c];
+            const chapQuestions = QUESTION_BANK.filter(q => q.chapter === c);
+            let done = 0, correct = 0;
+            chapQuestions.forEach(q => {
+                if (studyProgress[q.id]) {
+                    done++;
+                    if (studyProgress[q.id] === q.ans) correct++;
+                }
+            });
+            const pct = Math.round((done / chapQuestions.length) * 100);
+            const isSelected = currentStudyChapter === c;
+
+            cardsHtml += `
+                <div onclick="selectStudyChapter(${c})" class="cursor-pointer rounded-2xl p-4 border-2 transition-all ${isSelected ? 'bg-blue-50/60 border-blue-600 shadow-md' : 'bg-white border-slate-200 hover:border-blue-300 shadow-xs'}">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2.5 py-0.5 rounded-lg text-xs font-bold ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700'}">${meta.short}</span>
+                        <span class="text-xs font-bold text-slate-500">${done}/${chapQuestions.length} câu</span>
+                    </div>
+                    <h3 class="font-bold text-slate-900 text-sm line-clamp-1">${meta.title.replace(/^Chương \d:\s*/, '')}</h3>
+                    <p class="text-xs text-slate-500 mt-1 line-clamp-2 min-h-[32px]">${meta.desc}</p>
+                    <div class="mt-3">
+                        <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                            <div class="bg-blue-600 h-1.5 rounded-full transition-all duration-300" style="width: ${pct}%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] font-medium text-slate-500 mt-1">
+                            <span>Tiến độ: ${pct}%</span>
+                            <span class="text-emerald-600 font-semibold">Đúng: ${correct}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        cardsContainer.innerHTML = cardsHtml;
+
+        // 2. Update Control Header
+        const activeMeta = CHAPTER_META[currentStudyChapter];
+        const activeQuestions = QUESTION_BANK.filter(q => q.chapter === currentStudyChapter);
+        let doneCount = 0, correctCount = 0, wrongCount = 0;
+        activeQuestions.forEach(q => {
+            const ans = studyProgress[q.id];
+            if (ans) {
+                doneCount++;
+                if (ans === q.ans) correctCount++;
+                else wrongCount++;
+            }
+        });
+
+        document.getElementById("study-current-badge").innerText = activeMeta.short;
+        document.getElementById("study-current-title").innerText = activeMeta.title.replace(/^Chương \d:\s*/, '');
+        document.getElementById("study-progress-text").innerHTML = `Đã hoàn thành <strong>${doneCount}/${activeQuestions.length}</strong> câu (<span class="text-emerald-600 font-semibold">Đúng: ${correctCount}</span> • <span class="text-rose-600 font-semibold">Sai: ${wrongCount}</span>)`;
+
+        renderStudyQuestions();
+    }
+
+    function getFilteredStudyQuestions() {
+        return QUESTION_BANK.filter(q => {
+            if (q.chapter !== currentStudyChapter) return false;
+            const userAns = studyProgress[q.id];
+            if (studyFilter === "unanswered" && userAns) return false;
+            if (studyFilter === "correct" && userAns !== q.ans) return false;
+            if (studyFilter === "wrong" && (!userAns || userAns === q.ans)) return false;
+
+            if (studySearchQuery) {
+                const inQ = q.q.toLowerCase().includes(studySearchQuery);
+                const inOpts = Object.values(q.opts).some(v => v.toLowerCase().includes(studySearchQuery));
+                const inNum = (`câu ${q.num}`).includes(studySearchQuery);
+                if (!inQ && !inOpts && !inNum) return false;
+            }
+            return true;
+        });
+    }
+
+    function renderStudyQuestions() {
+        const area = document.getElementById("study-questions-area");
+        const list = getFilteredStudyQuestions();
+
+        if (list.length === 0) {
+            area.innerHTML = `
+                <div class="bg-white rounded-2xl border border-slate-200 p-10 text-center">
+                    <div class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto mb-3">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <h4 class="font-bold text-slate-700">Không tìm thấy câu hỏi phù hợp</h4>
+                    <p class="text-sm text-slate-500 mt-1">Hãy thử thay đổi bộ lọc trạng thái hoặc từ khóa tìm kiếm.</p>
+                </div>
+            `;
+            return;
+        }
+
+        if (studyViewMode === "list") {
+            area.innerHTML = list.map(q => buildStudyCardHTML(q)).join("");
+        } else {
+            if (singleCardIndex >= list.length) singleCardIndex = list.length - 1;
+            if (singleCardIndex < 0) singleCardIndex = 0;
+            const currentQ = list[singleCardIndex];
+
+            area.innerHTML = `
+                ${buildStudyCardHTML(currentQ)}
+                <div class="flex items-center justify-between bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                    <button onclick="navigateSingleCard(-1)" ${singleCardIndex === 0 ? 'disabled' : ''} class="px-4 py-2 rounded-xl text-sm font-semibold border border-slate-200 ${singleCardIndex === 0 ? 'opacity-40 cursor-not-allowed bg-slate-50' : 'hover:bg-slate-100 text-slate-700'} transition flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                        Câu trước
+                    </button>
+                    <span class="text-sm font-bold text-slate-700">Câu ${singleCardIndex + 1} / ${list.length}</span>
+                    <button onclick="navigateSingleCard(1)" ${singleCardIndex === list.length - 1 ? 'disabled' : ''} class="px-4 py-2 rounded-xl text-sm font-semibold bg-blue-600 text-white ${singleCardIndex === list.length - 1 ? 'opacity-40 cursor-not-allowed' : 'hover:bg-blue-700'} transition flex items-center gap-1.5">
+                        Câu tiếp theo
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </button>
+                </div>
+            `;
+        }
+    }
+
+    function navigateSingleCard(delta) {
+        singleCardIndex += delta;
+        renderStudyQuestions();
+    }
+
+    function buildStudyCardHTML(q) {
+        const userAns = studyProgress[q.id];
+        const isAnswered = Boolean(userAns);
+        const isCorrect = userAns === q.ans;
+
+        let statusBadge = "";
+        if (isAnswered) {
+            statusBadge = isCorrect
+                ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-700">✓ Chính xác</span>`
+                : `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-700">✕ Chưa đúng</span>`;
+        }
+
+        const optionsHtml = ["A", "B", "C", "D"].map(key => {
+            const text = q.opts[key];
+            let cardStyle = "border-slate-200 bg-white hover:border-blue-400 hover:bg-blue-50/40 cursor-pointer";
+            let circleStyle = "bg-slate-100 text-slate-700 border-slate-300";
+            let iconRight = "";
+
+            if (isAnswered) {
+                if (key === q.ans) {
+                    cardStyle = "border-emerald-500 bg-emerald-50/80 text-emerald-950 font-medium";
+                    circleStyle = "bg-emerald-600 text-white border-emerald-600";
+                    iconRight = `<span class="text-emerald-600 font-bold text-sm ml-2 shrink-0">✓ Đúng</span>`;
+                } else if (key === userAns && userAns !== q.ans) {
+                    cardStyle = "border-rose-500 bg-rose-50/80 text-rose-950";
+                    circleStyle = "bg-rose-600 text-white border-rose-600";
+                    iconRight = `<span class="text-rose-600 font-bold text-sm ml-2 shrink-0">✕ Bạn chọn</span>`;
+                } else {
+                    cardStyle = "border-slate-100 bg-slate-50/60 text-slate-500 opacity-75 cursor-pointer hover:opacity-100";
+                }
+            }
+
+            return `
+                <div onclick="handleStudySelect('${q.id}', '${key}')" class="option-card flex items-start justify-between p-3.5 rounded-xl border-2 ${cardStyle}">
+                    <div class="flex items-start gap-3">
+                        <span class="w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-extrabold shrink-0 mt-0.5 ${circleStyle}">${key}</span>
+                        <span class="text-sm sm:text-[15px] leading-relaxed">${text}</span>
+                    </div>
+                    ${iconRight}
+                </div>
+            `;
+        }).join("");
+
+        const explanationHtml = isAnswered ? `
+            <div class="mt-4 p-4 rounded-xl bg-amber-50/90 border border-amber-200 text-sm text-slate-800">
+                <div class="flex items-center gap-1.5 font-bold text-amber-900 mb-1">
+                    <svg class="w-4 h-4 text-amber-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    <span>Căn cứ pháp lý & Giải thích (Đáp án đúng: ${q.ans}):</span>
+                </div>
+                <p class="text-slate-700 leading-relaxed">${q.exp}</p>
+            </div>
+        ` : "";
+
+        return `
+            <div id="study-card-${q.id}" class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6">
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="inline-flex items-center px-3 py-1 rounded-lg text-xs font-extrabold bg-blue-50 text-blue-700 border border-blue-100">
+                        Câu ${q.num} • ${CHAPTER_META[q.chapter].short}
+                    </span>
+                    ${statusBadge}
+                </div>
+                <h3 class="text-base sm:text-[17px] font-bold text-slate-900 leading-snug mb-4">${q.q}</h3>
+                <div class="space-y-2.5">
+                    ${optionsHtml}
+                </div>
+                ${explanationHtml}
+            </div>
+        `;
+    }
+
+    function handleStudySelect(qId, selectedKey) {
+        studyProgress[qId] = selectedKey;
+        saveStudyProgress();
+        renderStudyDashboard();
+    }
+
+    // =========================================================================
+    // 5. LOGIC PHÂN HỆ THI THỬ (TÍNH GIỜ & XÁO TRỘN CHỐNG TRÙNG LẶP)
+    // =========================================================================
+    function fisherYatesShuffle(arr) {
+        const copy = [...arr];
+        for (let i = copy.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy;
+    }
+
+    // Chuẩn bị câu hỏi cho phòng thi: xáo trộn đáp án an toàn (giữ nguyên A,B,C,D nếu có "Tất cả đều đúng/sai")
+    function prepareExamQuestion(rawQ) {
+        const optionValues = Object.values(rawQ.opts).map(s => s.toLowerCase());
+        const hasCombinedOption = optionValues.some(v =>
+            v.includes("tất cả đều") ||
+            v.includes("tất cả các đáp án") ||
+            v.includes("cả a và b") ||
+            v.includes("cả a, b")
+        );
+
+        if (hasCombinedOption) {
+            return {
+                ...rawQ,
+                examOpts: { ...rawQ.opts },
+                examAns: rawQ.ans
+            };
+        }
+
+        // Xáo trộn 4 đáp án A, B, C, D
+        const keys = ["A", "B", "C", "D"];
+        const shuffledKeys = fisherYatesShuffle(keys);
+        const newOpts = {};
+        let newAns = rawQ.ans;
+
+        keys.forEach((targetKey, idx) => {
+            const sourceKey = shuffledKeys[idx];
+            newOpts[targetKey] = rawQ.opts[sourceKey];
+            if (sourceKey === rawQ.ans) {
+                newAns = targetKey;
+            }
+        });
+
+        return {
+            ...rawQ,
+            examOpts: newOpts,
+            examAns: newAns
+        };
+    }
+
+    function startChapterExam() {
+        const chapId = parseInt(document.getElementById("exam-chapter-select").value, 10);
+        const meta = CHAPTER_META[chapId];
+        const rawList = QUESTION_BANK.filter(q => q.chapter === chapId);
+        const shuffled = fisherYatesShuffle(rawList).map(prepareExamQuestion);
+
+        initExamSession({
+            mode: "chapter",
+            chapterId: chapId,
+            title: `Thi thử ${meta.title} (${shuffled.length} câu)`,
+            durationSeconds: 35 * 60, // 35 phút
+            questions: shuffled
+        });
+    }
+
+    function startRandomExam() {
+        // Lấy lịch sử ID câu đã thi ở đề gần nhất để tránh trùng lặp tối đa
+        const lastIds = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY_LAST_EXAM) || "[]"));
+
+        // Ma trận 30 câu phân bổ đều 4 chương: C1: 7, C2: 7, C3: 8, C4: 8
+        const quotas = { 1: 7, 2: 7, 3: 8, 4: 8 };
+        let selectedRaw = [];
+
+        for (let c = 1; c <= 4; c++) {
+            const pool = QUESTION_BANK.filter(q => q.chapter === c);
+            const unseenPool = fisherYatesShuffle(pool.filter(q => !lastIds.has(q.id)));
+            const seenPool = fisherYatesShuffle(pool.filter(q => lastIds.has(q.id)));
+            const combined = [...unseenPool, ...seenPool];
+            selectedRaw.push(...combined.slice(0, quotas[c]));
+        }
+
+        // Xáo trộn toàn bộ 30 câu đã chọn
+        const finalQuestions = fisherYatesShuffle(selectedRaw).map(prepareExamQuestion);
+
+        // Lưu danh sách ID đề này vào localStorage để lần tạo đề tiếp theo không lặp lại
+        localStorage.setItem(STORAGE_KEY_LAST_EXAM, JSON.stringify(finalQuestions.map(q => q.id)));
+
+        initExamSession({
+            mode: "random",
+            chapterId: null,
+            title: "Đề thi tổng hợp ngẫu nhiên 4 Chương (30 câu)",
+            durationSeconds: 30 * 60, // 30 phút
+            questions: finalQuestions
+        });
+    }
+
+    function initExamSession({ mode, chapterId, title, durationSeconds, questions }) {
+        clearInterval(examState.timerInterval);
+        examState = {
+            active: true,
+            mode,
+            chapterId,
+            title,
+            durationSeconds,
+            remainingSeconds: durationSeconds,
+            timerInterval: null,
+            questions,
+            userAnswers: {},
+            submitted: false,
+            reviewFilter: "all"
+        };
+
+        document.getElementById("exam-setup-view").classList.add("hidden");
+        document.getElementById("exam-result-view").classList.add("hidden");
+        document.getElementById("exam-active-view").classList.remove("hidden");
+
+        document.getElementById("exam-mode-badge").innerText = mode === "chapter" ? `Thi ${CHAPTER_META[chapterId].short}` : "Thi tổng hợp 4 chương";
+        document.getElementById("exam-active-title").innerText = title;
+
+        renderExamRoom();
+        startExamTimer();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function formatTimeMMSS(totalSec) {
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function startExamTimer() {
+        updateTimerUI();
+        examState.timerInterval = setInterval(() => {
+            examState.remainingSeconds--;
+            updateTimerUI();
+
+            if (examState.remainingSeconds <= 0) {
+                clearInterval(examState.timerInterval);
+                finishAndGradeExam(true);
+            }
+        }, 1000);
+    }
+
+    function updateTimerUI() {
+        const box = document.getElementById("exam-timer-box");
+        const display = document.getElementById("exam-timer-display");
+        display.innerText = formatTimeMMSS(Math.max(0, examState.remainingSeconds));
+
+        if (examState.remainingSeconds <= 300) { // Cảnh báo đỏ khi còn <= 5 phút
+            box.className = "flex items-center gap-2 px-4 py-2 rounded-xl border border-rose-300 font-mono font-extrabold text-lg sm:text-xl timer-danger";
+        } else {
+            box.className = "flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 border border-slate-200 text-slate-800 font-mono font-extrabold text-lg sm:text-xl";
+        }
+    }
+
+    function renderExamRoom() {
+        const qListEl = document.getElementById("exam-questions-list");
+        const paletteEl = document.getElementById("exam-palette-grid");
+        const total = examState.questions.length;
+
+        // Render Questions
+        qListEl.innerHTML = examState.questions.map((q, idx) => {
+            const chosen = examState.userAnswers[idx];
+            const optsHtml = ["A", "B", "C", "D"].map(key => {
+                const isSelected = chosen === key;
+                return `
+                    <div onclick="selectExamAnswer(${idx}, '${key}')" id="exam-q${idx}-opt-${key}" class="option-card flex items-start p-3.5 rounded-xl border-2 cursor-pointer ${isSelected ? 'border-blue-600 bg-blue-50/80 text-blue-950 font-medium' : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'}">
+                        <span id="exam-q${idx}-circle-${key}" class="w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-extrabold shrink-0 mr-3 mt-0.5 ${isSelected ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-700 border-slate-300'}">${key}</span>
+                        <span class="text-sm sm:text-[15px] leading-relaxed">${q.examOpts[key]}</span>
+                    </div>
+                `;
+            }).join("");
+
+            return `
+                <div id="exam-question-card-${idx}" class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6 scroll-mt-44">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="px-3 py-1 rounded-lg text-xs font-extrabold bg-slate-800 text-white">Câu ${idx + 1} / ${total}</span>
+                        <span class="text-xs font-semibold text-slate-400">${CHAPTER_META[q.chapter].short}</span>
+                    </div>
+                    <h4 class="text-base sm:text-[17px] font-bold text-slate-900 leading-snug mb-4">${q.q}</h4>
+                    <div class="space-y-2.5">${optsHtml}</div>
+                </div>
+            `;
+        }).join("");
+
+        // Render Palette
+        paletteEl.innerHTML = examState.questions.map((_, idx) => {
+            const isDone = Boolean(examState.userAnswers[idx]);
+            return `
+                <button onclick="scrollToExamQuestion(${idx})" id="palette-btn-${idx}" class="h-9 rounded-lg text-xs font-bold border transition ${isDone ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-50 text-slate-700 border-slate-200 hover:border-blue-400'}">
+                    ${idx + 1}
+                </button>
+            `;
+        }).join("");
+
+        updateExamCounterUI();
+    }
+
+    function selectExamAnswer(qIdx, key) {
+        if (examState.submitted) return;
+        examState.userAnswers[qIdx] = key;
+
+        // Cập nhật UI trực tiếp của câu hỏi để tránh render lại toàn trang gây giật
+        ["A", "B", "C", "D"].forEach(k => {
+            const optEl = document.getElementById(`exam-q${qIdx}-opt-${k}`);
+            const cirEl = document.getElementById(`exam-q${qIdx}-circle-${k}`);
+            if (k === key) {
+                optEl.className = "option-card flex items-start p-3.5 rounded-xl border-2 cursor-pointer border-blue-600 bg-blue-50/80 text-blue-950 font-medium";
+                cirEl.className = "w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-extrabold shrink-0 mr-3 mt-0.5 bg-blue-600 text-white border-blue-600";
+            } else {
+                optEl.className = "option-card flex items-start p-3.5 rounded-xl border-2 cursor-pointer border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50";
+                cirEl.className = "w-7 h-7 rounded-lg border flex items-center justify-center text-xs font-extrabold shrink-0 mr-3 mt-0.5 bg-slate-100 text-slate-700 border-slate-300";
+            }
+        });
+
+        const palBtn = document.getElementById(`palette-btn-${qIdx}`);
+        if (palBtn) {
+            palBtn.className = "h-9 rounded-lg text-xs font-bold border transition bg-blue-600 text-white border-blue-600";
+        }
+
+        updateExamCounterUI();
+    }
+
+    function updateExamCounterUI() {
+        const done = Object.keys(examState.userAnswers).length;
+        const total = examState.questions.length;
+        document.getElementById("exam-answered-counter").innerText = `${done} / ${total}`;
+        document.getElementById("palette-progress-text").innerText = `${done}/${total} câu`;
+    }
+
+    function scrollToExamQuestion(idx) {
+        const el = document.getElementById(`exam-question-card-${idx}`);
+        if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function openSubmitConfirmModal() {
+        const total = examState.questions.length;
+        const done = Object.keys(examState.userAnswers).length;
+        const unanswered = total - done;
+
+        const msg = unanswered > 0
+            ? `Bạn mới hoàn thành ${done}/${total} câu (còn ${unanswered} câu chưa chọn đáp án). Bạn có chắc chắn muốn nộp bài ngay bây giờ không?`
+            : `Bạn đã hoàn thành tất cả ${total}/${total} câu hỏi. Xác nhận nộp bài để xem điểm và đáp án chi tiết?`;
+
+        openCustomModal("Xác nhận nộp bài thi", msg, () => {
+            finishAndGradeExam(false);
+        });
+    }
+
+    function quitExamConfirm() {
+        openCustomModal(
+            "Thoát phòng thi",
+            "Bạn có chắc chắn muốn hủy bài thi hiện tại và quay lại màn hình chọn đề không?",
+            () => {
+                clearInterval(examState.timerInterval);
+                examState.active = false;
+                backToExamSetup();
+            }
+        );
+    }
+
+    function finishAndGradeExam(isTimeUp) {
+        clearInterval(examState.timerInterval);
+        examState.submitted = true;
+        examState.active = false;
+
+        const total = examState.questions.length;
+        let correct = 0;
+
+        examState.questions.forEach((q, idx) => {
+            if (examState.userAnswers[idx] === q.examAns) {
+                correct++;
+            }
+        });
+
+        const score10 = ((correct / total) * 10).toFixed(2);
+        const timeUsed = examState.durationSeconds - Math.max(0, examState.remainingSeconds);
+
+        document.getElementById("res-exam-title").innerText = isTimeUp ? `${examState.title} (Hết giờ tự động nộp)` : examState.title;
+        document.getElementById("res-score-10").innerText = score10;
+        document.getElementById("res-correct-count").innerText = `${correct}/${total}`;
+        document.getElementById("res-wrong-count").innerText = `${total - correct}`;
+        document.getElementById("res-time-taken").innerText = formatTimeMMSS(timeUsed);
+
+        let gradeMsg = "";
+        const numScore = parseFloat(score10);
+        if (numScore >= 9.0) gradeMsg = "Xếp loại: Xuất sắc — Nắm vững toàn diện kiến thức Pháp luật Đại cương!";
+        else if (numScore >= 8.0) gradeMsg = "Xếp loại: Giỏi — Kiến thức pháp lý rất vững vàng!";
+        else if (numScore >= 6.5) gradeMsg = "Xếp loại: Khá — Bạn đã nắm được các nội dung trọng tâm, hãy xem lại các câu sai.";
+        else if (numScore >= 5.0) gradeMsg = "Xếp loại: Trung bình — Đạt yêu cầu nhưng cần ôn luyện thêm các chương.";
+        else gradeMsg = "Xếp loại: Chưa đạt — Hãy quay lại mục Ôn tập theo chương để củng cố kiến thức nhé!";
+
+        document.getElementById("res-grade-text").innerText = gradeMsg;
+
+        document.getElementById("exam-active-view").classList.add("hidden");
+        document.getElementById("exam-result-view").classList.remove("hidden");
+
+        filterExamReview("all");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function filterExamReview(filterType) {
+        examState.reviewFilter = filterType;
+        document.querySelectorAll(".rfilter-btn").forEach(btn => {
+            if (btn.dataset.rfilter === filterType) {
+                btn.classList.add("ring-2", "ring-offset-1", "ring-slate-800");
+            } else {
+                btn.classList.remove("ring-2", "ring-offset-1", "ring-slate-800");
+            }
+        });
+
+        const listEl = document.getElementById("exam-review-list");
+        const items = examState.questions.map((q, idx) => ({ q, idx, userAns: examState.userAnswers[idx] }))
+            .filter(item => {
+                if (filterType === "correct") return item.userAns === item.q.examAns;
+                if (filterType === "wrong") return item.userAns && item.userAns !== item.q.examAns;
+                if (filterType === "unanswered") return !item.userAns;
+                return true;
+            });
+
+        if (items.length === 0) {
+            listEl.innerHTML = `<div class="bg-white rounded-2xl border border-slate-200 p-8 text-center text-sm text-slate-500">Không có câu hỏi nào thuộc nhóm lọc này.</div>`;
+            return;
+        }
+
+        listEl.innerHTML = items.map(({ q, idx, userAns }) => {
+            const isCorrect = userAns === q.examAns;
+            const statusTag = !userAns
+                ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Chưa làm</span>`
+                : isCorrect
+                    ? `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">✓ Đúng</span>`
+                    : `<span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-100 text-rose-800">✕ Sai</span>`;
+
+            const optsHtml = ["A", "B", "C", "D"].map(key => {
+                let style = "border-slate-100 bg-slate-50/60 text-slate-600";
+                let badge = "bg-slate-200 text-slate-700";
+                let note = "";
+
+                if (key === q.examAns) {
+                    style = "border-emerald-500 bg-emerald-50 text-emerald-950 font-semibold";
+                    badge = "bg-emerald-600 text-white";
+                    note = `<span class="text-xs font-bold text-emerald-700 ml-2 shrink-0">✓ Đáp án đúng</span>`;
+                } else if (key === userAns && !isCorrect) {
+                    style = "border-rose-500 bg-rose-50 text-rose-950";
+                    badge = "bg-rose-600 text-white";
+                    note = `<span class="text-xs font-bold text-rose-700 ml-2 shrink-0">✕ Bạn đã chọn</span>`;
+                }
+
+                return `
+                    <div class="flex items-start justify-between p-3 rounded-xl border-2 ${style}">
+                        <div class="flex items-start gap-3">
+                            <span class="w-6 h-6 rounded-md flex items-center justify-center text-xs font-bold shrink-0 mt-0.5 ${badge}">${key}</span>
+                            <span class="text-sm">${q.examOpts[key]}</span>
+                        </div>
+                        ${note}
+                    </div>
+                `;
+            }).join("");
+
+            return `
+                <div class="bg-white rounded-2xl shadow-xs border border-slate-200 p-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-xs font-extrabold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">Câu ${idx + 1} • ${CHAPTER_META[q.chapter].short}</span>
+                        ${statusTag}
+                    </div>
+                    <h4 class="text-base font-bold text-slate-900 mb-3.5">${q.q}</h4>
+                    <div class="space-y-2">${optsHtml}</div>
+                    <div class="mt-4 p-3.5 rounded-xl bg-blue-50/70 border border-blue-100 text-xs sm:text-sm text-slate-700">
+                        <strong class="text-blue-900">Giải thích:</strong> ${q.exp}
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function retakeSameExam() {
+        // Giữ nguyên bộ câu hỏi của đề vừa thi nhưng xóa đáp án đã chọn và đếm ngược lại
+        initExamSession({
+            mode: examState.mode,
+            chapterId: examState.chapterId,
+            title: examState.title,
+            durationSeconds: examState.durationSeconds,
+            questions: examState.questions
+        });
+    }
+
+    function generateNewExamSameMode() {
+        if (examState.mode === "chapter") {
+            const chapId = examState.chapterId;
+            const meta = CHAPTER_META[chapId];
+            const rawList = QUESTION_BANK.filter(q => q.chapter === chapId);
+            const shuffled = fisherYatesShuffle(rawList).map(prepareExamQuestion);
+            initExamSession({
+                mode: "chapter",
+                chapterId: chapId,
+                title: `Thi thử ${meta.title} (${shuffled.length} câu)`,
+                durationSeconds: 35 * 60,
+                questions: shuffled
+            });
+        } else {
+            startRandomExam();
+        }
+    }
+
+    function backToExamSetup() {
+        clearInterval(examState.timerInterval);
+        examState.active = false;
+        document.getElementById("exam-active-view").classList.add("hidden");
+        document.getElementById("exam-result-view").classList.add("hidden");
+        document.getElementById("exam-setup-view").classList.remove("hidden");
+    }
+
+    // =========================================================================
+    // 6. KHỞI TẠO BAN ĐẦU
+    // =========================================================================
+    window.addEventListener("DOMContentLoaded", () => {
+        renderStudyDashboard();
+    });
+    </script>
+</body>
+</html>
